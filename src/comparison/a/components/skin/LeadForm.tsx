@@ -5,6 +5,7 @@ import { Button } from "@/comparison/a/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getAttribution, track } from "@/comparison/a/lib/analytics";
 import { deliverLead } from "@/comparison/a/lib/lead-delivery";
+import { getSkinCheck, skinCheckPayload } from "@/comparison/skinCheckStore";
 import type { AgeJourneySelection } from "./AgeJourney";
 
 export function LeadForm({
@@ -55,12 +56,14 @@ export function LeadForm({
         lead_type: source === "age_preview" ? "age_transform_interest" : "consultation_booking",
         name,
         phone,
-        primary_concern: String(data.get("concern") ?? "").trim(),
+        primary_concern:
+          String(data.get("concern") ?? "").trim() || getSkinCheck()?.answers["concern"] || "",
         face_areas: faceAreas,
         age_journey_selection: ageJourney ?? null,
         source,
         consent_status: true,
         consent_whatsapp: true,
+        ...skinCheckPayload(),
         photo_processing_consent: false,
         landing_page_identifier: "anti-aging-consultation-karur",
         timestamp: new Date().toISOString(),

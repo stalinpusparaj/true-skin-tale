@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { setSkinCheck } from "@/comparison/skinCheckStore";
 import { ArrowLeft, ArrowRight, Check, Clock3, Heart, MapPin, RefreshCw, Sparkles, Target } from "lucide-react";
 import { Button } from "@/comparison/b/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -265,6 +266,7 @@ export function SkinAssessment({
       if (step === QUESTIONS.length - 1) {
         onComplete(answerState);
         onProfile?.(getProfile(answerState["concern"]));
+        setSkinCheck({ answers: answerState, profile: getProfile(answerState["concern"]) });
         track("assessment_completed");
         setStage("result");
         return;
@@ -411,110 +413,119 @@ export function SkinAssessment({
     ];
 
     return (
-      <div className="assessment-card" aria-live="polite">
-        <p className="eyebrow text-clay">Your Skin Check Summary</p>
-        <h3 className="mt-4 max-w-3xl text-4xl leading-[1.08] sm:text-5xl">Your priority: {concernLabel}</h3>
-        <p className="mt-5 max-w-2xl text-[0.98rem] leading-relaxed text-muted-foreground">
-          Based on what you've told us, {focus} are the priorities to bring into your consultation.
-        </p>
+      <div className="assessment-card skin-result" aria-live="polite">
+        <div className="skin-result-hero">
+          <p className="skin-result-pill">
+            <Sparkles aria-hidden="true" /> Your Skin Check Summary
+          </p>
+          <h3 className="skin-result-heading">
+            Your priority: <em>{concernLabel}</em>
+          </h3>
+          <p className="skin-result-lead">
+            Based on what you've told us, {focus} are the priorities to bring into your
+            consultation.
+          </p>
+          <p className="skin-result-disclaimer">
+            A self-reported profile to guide your conversation with the dermatologist, not a
+            medical diagnosis.
+          </p>
+        </div>
 
-        <p className="mt-3 text-xs text-muted-foreground">
-          A self-reported profile to guide your conversation with the dermatologist—not a medical
-          diagnosis.
-        </p>
-
-        <div className="mt-8 grid gap-4 lg:grid-cols-[1.05fr_.95fr]">
-          <div className="relative overflow-hidden rounded-[1.75rem] bg-ink p-6 text-ink-foreground sm:p-7">
-            <div className="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-clay/20 blur-2xl" />
-            <div className="relative flex items-start justify-between gap-4">
+        <div className="skin-result-grid mt-8">
+          <div className="skin-result-panel skin-result-snapshot">
+            <div className="skin-result-panel-head">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-clay">Your skin snapshot</p>
-                <p className="mt-2 font-display text-3xl leading-tight">What you told us</p>
+                <p className="skin-result-kicker">Your skin snapshot</p>
+                <p className="skin-result-title">What you told us</p>
               </div>
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-clay">
-                <Sparkles className="size-5" />
+              <span className="skin-result-badge" aria-hidden="true">
+                <Sparkles />
               </span>
             </div>
-            <div className="relative mt-6 grid gap-3 sm:grid-cols-2">
+            <dl className="skin-result-facts">
               {[
                 { label: "Main concern", value: concernLabel, icon: Target },
                 { label: "Area noticed most", value: answers["area"] || "Not specified", icon: MapPin },
                 { label: "Noticed since", value: answers["duration"] || "Not specified", icon: Clock3 },
+                { label: "Already tried", value: answers["tried"] || "Not specified", icon: RefreshCw },
                 { label: "Desired result", value: selectedGoal[0], icon: Heart },
+                { label: "Comfortable with", value: answers["comfort"] || "Not sure yet", icon: Check },
               ].map(({ label, value, icon: Icon }) => (
-                <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-                  <Icon className="size-4 text-clay" />
-                  <p className="mt-4 text-[0.68rem] uppercase tracking-[0.12em] text-ink-foreground/45">{label}</p>
-                  <p className="mt-1 text-sm font-medium leading-snug text-ink-foreground">{value}</p>
+                <div key={label} className="skin-result-fact">
+                  <span className="skin-result-fact-icon" aria-hidden="true">
+                    <Icon />
+                  </span>
+                  <div>
+                    <dt>{label}</dt>
+                    <dd>{value}</dd>
+                  </div>
                 </div>
               ))}
-            </div>
+            </dl>
           </div>
-          <div className="rounded-[1.75rem] border border-clay/20 bg-gradient-to-br from-clay/15 via-card to-sand p-6 sm:p-7">
-            <div className="flex items-start justify-between gap-4">
+          <div className="skin-result-panel skin-result-wants">
+            <div className="skin-result-panel-head">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-clay">Your desired direction</p>
-                <p className="mt-2 font-display text-3xl leading-tight">What you want</p>
+                <p className="skin-result-kicker">Your desired direction</p>
+                <p className="skin-result-title">What you want</p>
               </div>
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-clay/15 text-clay">
-                <Heart className="size-5" />
+              <span className="skin-result-badge" aria-hidden="true">
+                <Heart />
               </span>
             </div>
-            <div className="mt-6 space-y-3">
+            <ul className="skin-result-wants-list">
               {DESIRED_OUTCOMES.map((item) => (
-                <div key={item} className="flex items-center gap-3 rounded-2xl border border-border/70 bg-background/65 px-4 py-3 text-sm leading-snug">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-clay text-clay-foreground">
-                    <Check className="size-3.5" />
+                <li key={item}>
+                  <span className="skin-result-check" aria-hidden="true">
+                    <Check />
                   </span>
                   {item}
-                </div>
+                </li>
               ))}
-            </div>
-            <div className="mt-5 rounded-2xl bg-ink/5 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-              Your consultation can focus on {selectedGoal[1].toLowerCase()} and a realistic plan for your skin.
-            </div>
+            </ul>
+            <p className="skin-result-note">
+              Your consultation in Karur can focus on {selectedGoal[1].toLowerCase()} and a
+              realistic plan for your skin.
+            </p>
           </div>
         </div>
-        <p className="mt-5 max-w-2xl border-l-2 border-clay pl-5 text-sm italic leading-relaxed text-muted-foreground">
-          The next step is understanding which professional options may actually be appropriate for
-          you—that's what a consultation is for.
-        </p>
 
-        <div className="mt-8 rounded-2xl bg-sand p-6">
-          <p className="eyebrow text-clay">Your next best step</p>
-          <p className="mt-3 max-w-2xl font-display text-3xl leading-tight">
-            You don't need to choose a treatment. You just need to understand your options.
-          </p>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            The dermatologist can assess these priorities and explain which options may be
-            appropriate for your skin.
-          </p>
-        </div>
-
-        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-border bg-gradient-to-br from-sage/10 to-clay/10 px-5 py-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-clay">Your profile</p>
-          <p className="font-display text-xl">{profile.name}</p>
-          <span className="text-sm text-muted-foreground">Natural-result preference</span>
-        </div>
-
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button
-            variant="clay"
-            size="xl"
-            asChild
-            onClick={() => track("booking_form_started", { source: "assessment_result" })}
-          >
-            <a href="#b-consultation">
-              Discuss With Dermatologist <ArrowRight />
-            </a>
-          </Button>
-          <button
-            type="button"
-            onClick={resetAssessment}
-            className="rounded-full px-5 py-3 text-sm text-muted-foreground underline-offset-4 hover:underline"
-          >
-            Start again
-          </button>
+        <div className="skin-result-next mt-6">
+          <div className="skin-result-profile">
+            <p className="skin-result-kicker">Your profile</p>
+            <p className="skin-result-profile-name">{profile.name}</p>
+            <p className="skin-result-profile-sub">Natural-result preference</p>
+          </div>
+          <div className="skin-result-next-copy">
+            <p className="skin-result-kicker">Your next best step</p>
+            <p className="skin-result-next-title">
+              You don't need to choose a treatment. Bring this summary to a free consultation in
+              Karur.
+            </p>
+            <p className="skin-result-next-text">
+              Dr. S. Kiruthika will assess these priorities and explain which options suit your
+              skin. Your answers are attached when you book, so you won't have to repeat them.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button
+                variant="clay"
+                size="xl"
+                asChild
+                onClick={() => track("booking_form_started", { source: "assessment_result" })}
+              >
+                <a href="#a-hero-form">
+                  Book My Free Consultation <ArrowRight />
+                </a>
+              </Button>
+              <button
+                type="button"
+                onClick={resetAssessment}
+                className="skin-result-restart"
+              >
+                <RefreshCw className="size-3.5" /> Start again
+              </button>
+            </div>
+          </div>
         </div>
         <p className="mt-6 text-xs text-muted-foreground">
           This assessment is educational and does not replace medical consultation.
@@ -590,7 +601,7 @@ export function SkinAssessment({
         size="xl"
         className="skin-check-next mt-6 w-full sm:w-auto"
         disabled={!answers[question.id]}
-        onClick={nextQuestion}
+        onClick={() => nextQuestion()}
       >
         {step === QUESTIONS.length - 1 ? "See my summary" : "Next question"} <ArrowRight />
       </Button>

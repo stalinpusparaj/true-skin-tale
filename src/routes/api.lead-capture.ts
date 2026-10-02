@@ -118,6 +118,26 @@ type LeadTemperature = "HOT" | "WARM" | "COLD";
  * Hot ≥ 70 · Warm 45–69 · Cold < 45. A plain consultation request starts Warm;
  * detail, buying signals and repeat enquiries push it towards Hot.
  */
+const QUIZ_LABELS: Record<string, string> = {
+  concern: "Main concern",
+  area: "Area noticed most",
+  duration: "Noticed since",
+  tried: "Already tried",
+  goal: "Desired result",
+  comfort: "Comfortable with",
+};
+
+/** Skin-check answers as a plain string map (empty when the visitor skipped the quiz). */
+function quizAnswers(payload: LeadPayload): Record<string, string> {
+  const raw = payload["assessment_responses"];
+  if (!raw || typeof raw !== "object") return {};
+  const answers: Record<string, string> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (text(value)) answers[key] = text(value);
+  }
+  return answers;
+}
+
 function scoreLead(payload: LeadPayload, submissions: number) {
   const concern = text(payload.primary_concern);
   const answers = payload["assessment_responses"];
@@ -137,6 +157,11 @@ function scoreLead(payload: LeadPayload, submissions: number) {
   )
     score += 5;
   if (text(payload.email)) score += 5;
+  // Skin-check signals: has already paid for clinic treatment, or is open to whatever
+  // the dermatologist recommends — both convert better than "just browsing".
+  const quiz = quizAnswers(payload);
+  if (/previous clinical/i.test(quiz["tried"] ?? "")) score += 5;
+  if (/open to dermatologist/i.test(quiz["comfort"] ?? "")) score += 5;
   if (submissions > 1) score += 20;
   score = Math.min(100, score);
   const temperature: LeadTemperature = score >= 70 ? "HOT" : score >= 45 ? "WARM" : "COLD";
@@ -156,12 +181,18 @@ function opportunityFields(
   phone: string,
   referer: string | null,
 ): Record<string, unknown> {
-  const concern = text(payload.primary_concern);
+  const quiz = quizAnswers(payload);
+  const concern = text(payload.primary_concern) || quiz["concern"] || "";
   const preferredTime = text(payload["preferred_time"]);
+  const quizLines = Object.entries(QUIZ_LABELS)
+    .filter(([key]) => quiz[key])
+    .map(([key, label]) => `  • ${label}: ${quiz[key]}`);
+  const goals = [concern, quiz["goal"] && `wants: ${quiz["goal"]}`].filter(Boolean).join(" · ");
   const notes = [
     concern && `Concern: ${concern}`,
     preferredTime && `Preferred time: ${preferredTime}`,
     text(payload["result_profile"]) && `Skin-check result: ${text(payload["result_profile"])}`,
+    quizLines.length > 0 && `Skin-check answers:\n${quizLines.join("\n")}`,
     text(payload["device"]) && `Device: ${text(payload["device"])}`,
     text(payload["referrer"]) && `Referrer: ${text(payload["referrer"])}`,
   ].filter(Boolean);
@@ -180,7 +211,7 @@ function opportunityFields(
   };
   const optional: Record<string, string> = {
     leadEmail: text(payload.email),
-    leadGoals: concern,
+    leadGoals: goals,
     leadTimeline: preferredTime,
     leadUtmSource: text(payload["utm_source"]),
     leadUtmMedium: text(payload["utm_medium"]),
