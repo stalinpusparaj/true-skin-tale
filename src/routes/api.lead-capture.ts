@@ -162,6 +162,32 @@ async function twentyFetch<T>(
   return (await response.json()) as T;
 }
 
+/**
+ * Attach a note to a person or opportunity. Current Twenty versions name the relation
+ * `personId` / `opportunityId`; older ones used `targetPersonId` / `targetOpportunityId`.
+ * The lead is already stored by this point, so a failed link is logged, not fatal.
+ */
+async function linkNote(
+  baseUrl: string,
+  apiKey: string,
+  noteId: string,
+  target: "person" | "opportunity",
+  targetId: string,
+) {
+  const legacyKey = target === "person" ? "targetPersonId" : "targetOpportunityId";
+  for (const key of [`${target}Id`, legacyKey]) {
+    try {
+      await twentyFetch(baseUrl, apiKey, "/rest/noteTargets", {
+        method: "POST",
+        body: JSON.stringify({ noteId, [key]: targetId }),
+      });
+      return;
+    } catch (error) {
+      console.error(`Twenty CRM note link via ${key} failed`, error);
+    }
+  }
+}
+
 export const Route = createFileRoute("/api/lead-capture")({
   server: {
     handlers: {
@@ -284,19 +310,9 @@ export const Route = createFileRoute("/api/lead-capture")({
             },
           );
 
-          await twentyFetch(baseUrl, apiKey, "/rest/noteTargets", {
-            method: "POST",
-            body: JSON.stringify({ noteId: note.data.createNote.id, targetPersonId: personId }),
-          });
-          if (opportunityId) {
-            await twentyFetch(baseUrl, apiKey, "/rest/noteTargets", {
-              method: "POST",
-              body: JSON.stringify({
-                noteId: note.data.createNote.id,
-                targetOpportunityId: opportunityId,
-              }),
-            });
-          }
+          const noteId = note.data.createNote.id;
+          await linkNote(baseUrl, apiKey, noteId, "person", personId);
+          if (opportunityId) await linkNote(baseUrl, apiKey, noteId, "opportunity", opportunityId);
 
           return json({ ok: true, personId, opportunityId });
         } catch (error) {
