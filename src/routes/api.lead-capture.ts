@@ -74,7 +74,13 @@ function toMarkdown(payload: LeadPayload): string {
 
 const LEAD_SOURCE = "Sanjay Rithik skin landing page";
 
-function enquirySummary(payload: LeadPayload, name: string, phone: string, isRepeat: boolean) {
+function enquirySummary(
+  payload: LeadPayload,
+  name: string,
+  phone: string,
+  isRepeat: boolean,
+  scored?: { score: number; band: string },
+) {
   const concern =
     typeof payload.primary_concern === "string" && payload.primary_concern
       ? payload.primary_concern
@@ -89,6 +95,7 @@ function enquirySummary(payload: LeadPayload, name: string, phone: string, isRep
     `Name: ${name}`,
     `Phone: ${phone}`,
     `Concern: ${concern}`,
+    ...(scored ? [`Lead score: ${scored.score} / 100 (${scored.band})`] : []),
     "",
     "**All submitted details**",
     toMarkdown(payload),
@@ -97,6 +104,49 @@ function enquirySummary(payload: LeadPayload, name: string, phone: string, isRep
 
 function text(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+const HIGH_VALUE_TREATMENTS =
+  /laser|hair removal|botox|filler|prp|hydra|hifu|mnrf|booster|tattoo|scar|pigment|peel|anti.?ag/i;
+const PAID_SOURCES = /^(facebook|fb|instagram|ig|meta|google|youtube)$/i;
+const PAID_MEDIUMS = /^(cpc|ppc|paid|paid_social|paidsocial|ads|display)$/i;
+
+type LeadTemperature = "HOT" | "WARM" | "COLD";
+
+/**
+ * Score an enquiry 0–100 from what the visitor told us, and band it:
+ * Hot ≥ 70 · Warm 45–69 · Cold < 45. A plain consultation request starts Warm;
+ * detail, buying signals and repeat enquiries push it towards Hot.
+ */
+function scoreLead(payload: LeadPayload, submissions: number) {
+  const concern = text(payload.primary_concern);
+  const answers = payload["assessment_responses"];
+  let score = payload.lead_type === "age_transform_interest" ? 25 : 45;
+  if (concern && !/not sure/i.test(concern)) score += 10;
+  const intentText = [concern, JSON.stringify(answers ?? ""), text(payload["result_profile"])].join(" ");
+  if (HIGH_VALUE_TREATMENTS.test(intentText)) score += 10;
+  if (text(payload["preferred_time"])) score += 10;
+  if (
+    (answers && typeof answers === "object" && Object.keys(answers).length > 0) ||
+    text(payload["result_profile"])
+  )
+    score += 10;
+  if (
+    PAID_SOURCES.test(text(payload["utm_source"])) ||
+    PAID_MEDIUMS.test(text(payload["utm_medium"]))
+  )
+    score += 5;
+  if (text(payload.email)) score += 5;
+  if (submissions > 1) score += 20;
+  score = Math.min(100, score);
+  const temperature: LeadTemperature = score >= 70 ? "HOT" : score >= 45 ? "WARM" : "COLD";
+  const band = temperature === "HOT" ? "Hot" : temperature === "WARM" ? "Warm" : "Cold";
+  return { score, temperature, band };
+}
+
+function scoreFields(payload: LeadPayload, submissions: number) {
+  const { score, temperature, band } = scoreLead(payload, submissions);
+  return { leadScore: score, leadTemperature: temperature, leadBand: band };
 }
 
 /** Map a landing-page enquiry onto the workspace's existing custom Opportunity lead fields. */
@@ -254,6 +304,7 @@ export const Route = createFileRoute("/api/lead-capture")({
           // ("Name · Source"), with a "New enquiry" / "Repeat enquiry" note on it.
           const isRepeat = Boolean(existingPerson?.id);
           let opportunityId: string | undefined;
+          let leadScoreSummary: ReturnType<typeof scoreLead> | undefined;
           try {
             const openOpportunity = await twentyFetch<{
               data: { opportunities: Array<{ id: string; leadSubmissions?: number | null }> };
@@ -269,11 +320,14 @@ export const Route = createFileRoute("/api/lead-capture")({
               opportunityId = existingOpportunity.id;
               // Repeat enquiry: count it and refresh what the person told us this time.
               const { stage: _stage, leadSubmissions: _count, ...latest } = fields;
+              const submissions = (existingOpportunity.leadSubmissions ?? 1) + 1;
+              leadScoreSummary = scoreLead(payload, submissions);
               await twentyFetch(baseUrl, apiKey, `/rest/opportunities/${opportunityId}`, {
                 method: "PATCH",
                 body: JSON.stringify({
                   ...latest,
-                  leadSubmissions: (existingOpportunity.leadSubmissions ?? 1) + 1,
+                  ...scoreFields(payload, submissions),
+                  leadSubmissions: submissions,
                 }),
               }).catch((error) => console.error("Twenty CRM opportunity update failed", error));
             } else {
@@ -286,7 +340,12 @@ export const Route = createFileRoute("/api/lead-capture")({
                   { method: "POST", body: JSON.stringify(body) },
                 );
               // If the workspace's custom lead fields ever change, still record the opportunity.
-              const createdOpportunity = await create({ ...base, ...fields }).catch((error) => {
+              leadScoreSummary = scoreLead(payload, 1);
+              const createdOpportunity = await create({
+                ...base,
+                ...fields,
+                ...scoreFields(payload, 1),
+              }).catch((error) => {
                 console.error("Twenty CRM opportunity fields rejected; retrying without them", error);
                 return create(base);
               });
@@ -304,8 +363,10 @@ export const Route = createFileRoute("/api/lead-capture")({
             {
               method: "POST",
               body: JSON.stringify({
-                title: `${isRepeat ? "Repeat enquiry" : "New enquiry"}: ${name}`,
-                bodyV2: { markdown: enquirySummary(payload, name, phone, isRepeat) },
+                title: `${isRepeat ? "Repeat enquiry" : "New enquiry"}: ${name}${
+                  leadScoreSummary ? ` (${leadScoreSummary.band} · ${leadScoreSummary.score})` : ""
+                }`,
+                bodyV2: { markdown: enquirySummary(payload, name, phone, isRepeat, leadScoreSummary) },
               }),
             },
           );
