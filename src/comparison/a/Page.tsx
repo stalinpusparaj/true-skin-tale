@@ -15,7 +15,6 @@ import {
   TestTube,
   Waves,
   Zap,
-  Phone,
   Play,
   ShieldCheck,
   HeartHandshake,
@@ -33,7 +32,7 @@ import heroImage from "@/comparison/a/assets/hero-portrait.jpg";
 import heroPortrait from "@/comparison/b/assets/anti-aging-hero-v2.jpg";
 import { TreatmentPhoto } from "../TreatmentPhoto";
 import { WhatsAppIcon } from "../SiteChrome";
-import heroTreatmentGlow from "@/assets/hero-treatment-glow.png";
+import heroSkinTowel from "@/assets/hero-skin-towel.webp";
 import mirrorImage from "@/comparison/a/assets/mirror.jpeg";
 import hospitalLogo from "@/assets/hospital-logo.png";
 import doctorKiruthika from "@/comparison/a/assets/doctor-kiruthika.jpg";
@@ -143,7 +142,6 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
   const [faceAreas, setFaceAreas] = useState<string[]>([]);
   const [ageJourney, setAgeJourney] = useState<AgeJourneySelection | undefined>();
   const [showSticky, setShowSticky] = useState(false);
-  const [heroPointer, setHeroPointer] = useState({ x: 0, y: 0, active: false });
   useEffect(() => {
     track("page_view", { landing_page: "anti-aging-consultation-karur" });
     const depths = new Set<number>();
@@ -195,6 +193,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
       </a>,
 "navigation": <header className="premium-nav">
         <div className="premium-nav-inner">
+          <div className="premium-brand-group">
           <a href="#a-top" className="premium-brand" aria-label="Sanjay Rithik Hospital home">
             <img
               src={hospitalLogo}
@@ -207,10 +206,22 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
               <small>Skin Laser · Cosmetology</small>
             </span>
           </a>
+          <a
+            href={MAPS}
+            target="_blank"
+            rel="noreferrer"
+            className="nav-google-badge"
+            aria-label="Sanjay Rithik Hospital, Karur on Google: rated 4.5 from 447 reviews"
+            onClick={() => track("google_badge_clicked", { source: "navigation" })}
+          >
+            <GoogleIcon />
+            <span className="nav-google-place">Karur</span>
+            <span className="nav-google-rating">
+              4.5 <Star className="size-3 fill-current" />
+            </span>
+          </a>
+          </div>
           <div className="premium-nav-trust" aria-label="Clinic contact details">
-            <TrackedLink href="tel:+918903009723" event="phone_clicked" source="navigation">
-              <Phone className="size-4" /> 89030 09723
-            </TrackedLink>
             <span><Clock3 className="size-4" /> Open daily 10–2:30 · 6–9:30</span>
           </div>
           <TrackedLink
@@ -226,74 +237,101 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
       </header>,
 "hero": <section
         id="a-top"
-        className="premium-hero relative isolate overflow-hidden"
+        className="premium-hero hero-card-layout relative isolate overflow-hidden"
         style={{ width: "100vw", maxWidth: "none", marginLeft: "calc(50% - 50vw)" }}
-        onPointerMove={(event) => {
-          const bounds = event.currentTarget.getBoundingClientRect();
-          const localY = event.clientY - bounds.top;
-          if (localY > 200) {
-            if (heroPointer.active) setHeroPointer({ x: 0, y: 0, active: false });
-            return;
-          }
-          setHeroPointer({
-            x: ((event.clientX - bounds.left) / bounds.width - 0.5) * 2,
-            y: (localY / 200 - 0.5) * 2,
-            active: true,
-          });
-        }}
-        onPointerLeave={() => setHeroPointer({ x: 0, y: 0, active: false })}
       >
-        <div className="premium-hero-bg" />
-        <img src={heroTreatmentGlow} alt="" aria-hidden="true" className="premium-hero-photo" draggable={false} />
-        <div className="premium-hero-waves" aria-hidden="true" />
-        <div className="hero-inner premium-hero-inner">
+        <HeroParticles />
+        <div className="hero-inner premium-hero-inner hero-card-inner">
           <div className="hero-copy premium-hero-copy">
             <p className="premium-kicker">Dermatology · Sengunthapuram, Karur</p>
-            <h1>
-              Skin, hair or laser concern?
-              <span>See a dermatologist in Karur.</span>
+            <h1 className="hero-split-title">
+              Skin, hair or laser <em>concern?</em>
+              <span className="hero-title-sub">
+                See a dermatologist in <em>Karur</em>.
+              </span>
             </h1>
-            <div className="premium-offer">
-              <p className="premium-offer-tag">Free consultation + free laser test patch</p>
-              <p className="premium-offer-title">
-                Free dermatologist consultation with Dr. S. Kiruthika, MBBS, MD (Dermatology)
-              </p>
-              <p className="premium-offer-text">
-                Thinking about laser hair removal? Get a free test patch at your consultation:
-                feel the laser and see how your skin responds before you choose a package.
-              </p>
-              <Button variant="clay" size="xl" className="premium-offer-cta" asChild>
-                <TrackedLink href="#a-hero-form" event="consultation_cta_clicked" source="hero-offer">
-                  Book My Free Consultation <ArrowRight />
-                </TrackedLink>
-              </Button>
-            </div>
             <p className="premium-hero-text">
-              Dr. S. Kiruthika assesses your skin, hair or laser concern and explains suitable
-              options, sessions and costs before any treatment begins.
+              Dermatologist-led skin, hair and laser care at Sanjay Rithik Hospital with Dr. S.
+              Kiruthika, MBBS, MD (Dermatology). Your first consultation is free.
             </p>
-            <div className="premium-hero-badges">
-              <span><Star className="size-4 fill-current" /> 4.5 · 447 Google reviews</span>
-              <span><Clock3 className="size-4" /> Open daily 10 am–2:30 pm · 6–9:30 pm</span>
-            </div>
+            <p className="hero-urgency">
+              <span className="hero-urgency-dot" aria-hidden="true" />
+              <strong>Same-day consultation available · Limited slots this week.</strong>
+            </p>
             <div className="premium-hero-actions">
-              <Button variant="outline" size="xl" className="premium-secondary-cta" asChild>
-                <TrackedLink href="tel:+918903009723" event="phone_clicked" source="hero">
-                  <Phone /> Call 89030 09723
+              <Button variant="clay" size="xl" asChild>
+                <TrackedLink href="#a-hero-form" event="consultation_cta_clicked" source="hero">
+                  Book Free Consultation <ArrowRight />
                 </TrackedLink>
               </Button>
               <Button variant="outline" size="xl" className="premium-secondary-cta" asChild>
-                <TrackedLink href="https://wa.me/918903009723?text=Hello%2C%20I%20would%20like%20to%20book%20a%20free%20skin%20consultation." event="whatsapp_clicked" source="hero">
-                  <WhatsAppIcon /> WhatsApp us
+                <TrackedLink href="#a-advanced-treatments" event="treatment_options_click" source="hero">
+                  Explore Treatments
                 </TrackedLink>
               </Button>
             </div>
+            <p className="hero-hours">
+              <Clock3 className="size-4" /> Open daily 10 am–2:30 pm · 6–9:30 pm
+            </p>
           </div>
-          <div id="a-hero-form" className="premium-hero-form">
+          <figure className="hero-card">
+            <div className="hero-card-frame">
+              <img
+                src={heroSkinTowel}
+                alt="Smiling woman with healthy, glowing skin after a skincare treatment"
+                className="hero-card-image"
+                fetchPriority="high"
+                draggable={false}
+              />
+            </div>
+            <div className="hero-card-badge hero-card-badge-main">
+              <strong>550+ Happy Patients</strong>
+              <span>13+ years of experience</span>
+            </div>
+            <div className="hero-card-badge hero-card-badge-rating">
+              <strong>4.5★</strong>
+              <span>447 Google reviews</span>
+            </div>
+          </figure>
+        </div>
+      </section>,
+"offer-form": <Section id="a-offer" tone="sand" className="offer-form-section">
+        <div className="offer-form-grid">
+          <Reveal>
+            <p className="section-pill">Free consultation</p>
+            <h2 className="mt-5 text-4xl leading-[1.08] sm:text-5xl">
+              Your first dermatology visit in Karur is free.
+            </h2>
+            <p className="mt-5 leading-relaxed text-muted-foreground">
+              Book a free consultation with Dr. S. Kiruthika at Sanjay Rithik Hospital, Karur. She
+              assesses your skin, hair or laser concern and explains your options before any
+              treatment begins.
+            </p>
+            <ul className="offer-includes mt-7">
+              {[
+                "Dermatologist assessment of your skin, hair or nails",
+                "Treatment options, number of sessions and costs explained",
+                "No payment online, and no obligation to start treatment",
+              ].map((item) => (
+                <li key={item}>
+                  <Check className="offer-includes-icon" aria-hidden="true" /> {item}
+                </li>
+              ))}
+            </ul>
+            <div className="offer-contact mt-7">
+              <TrackedLink href="https://wa.me/918903009723?text=Hello%2C%20I%20would%20like%20to%20book%20a%20free%20skin%20consultation." event="whatsapp_clicked" source="a-offer">
+                <WhatsAppIcon size={16} /> WhatsApp us
+              </TrackedLink>
+              <span>
+                <MapPin className="size-4" /> 77A, Sengunthapuram Main Road, Karur
+              </span>
+            </div>
+          </Reveal>
+          <div id="a-hero-form" className="offer-form-card">
             <LeadForm source="hero" />
           </div>
         </div>
-      </section>,
+      </Section>,
 "clinic-facts": <div className="border-b border-border bg-sand px-5 py-5">
         <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-x-8 gap-y-3 text-sm">
           <span className="flex items-center gap-2">
@@ -303,7 +341,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
             <ShieldCheck className="size-4" /> Dr. S. Kiruthika, MBBS, MD (Dermatology)
           </span>
           <span className="flex items-center gap-2">
-            <HeartHandshake className="size-4" /> 13 years treating skin, hair &amp; nails
+            <HeartHandshake className="size-4" /> Free consultation · 13 years’ experience
           </span>
           <span className="flex items-center gap-2">
             <MapPin className="size-4" /> 77A, Sengunthapuram Main Road, Karur
@@ -363,7 +401,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
           <div>
             <Eyebrow>Visit us</Eyebrow>
             <h2 className="mt-4 text-4xl">
-              Where are we, and when can you visit?
+              Where are we in Karur, and when can you visit?
             </h2>
             <p className="mt-5 leading-relaxed">
               <strong>Sanjay Rithik Hospital</strong><br />77A, Sengunthapuram Main Road,
@@ -456,11 +494,6 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
 "sticky": <>
         {showSticky && (
         <div className="fixed inset-x-0 bottom-0 z-50 flex gap-2 border-t border-border bg-card/95 px-4 pb-[max(.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur md:hidden">
-          <Button variant="outline" size="pill" className="w-12 flex-none px-0" asChild>
-            <TrackedLink href="tel:+918903009723" event="phone_clicked" source="sticky">
-              <Phone /> <span className="sr-only">Call the clinic</span>
-            </TrackedLink>
-          </Button>
           <Button variant="outline" size="pill" className="w-12 flex-none px-0" asChild>
             <TrackedLink href="https://wa.me/918903009723?text=Hello%2C%20I%20would%20like%20to%20book%20a%20free%20skin%20consultation." event="whatsapp_clicked" source="sticky">
               <WhatsAppIcon /> <span className="sr-only">WhatsApp the clinic</span>
@@ -885,7 +918,7 @@ function DoctorSection() {
         </figure>
         <div>
           <Eyebrow muted>Your dermatologist</Eyebrow>
-          <h2 className="mt-4 text-4xl sm:text-5xl">Who will treat you? Meet Dr. S. Kiruthika</h2>
+          <h2 className="mt-4 text-4xl sm:text-5xl">Who will treat you in Karur? Meet Dr. S. Kiruthika</h2>
           <p className="mt-3 text-sm font-medium">MBBS, MD (Dermatology) · Dermatologist &amp; Cosmetologist · 13 years’ experience</p>
           <p className="mt-5 leading-relaxed text-muted-foreground">
             Dr. S. Kiruthika has treated skin, hair and nail conditions for 13 years at Sanjay Rithik
@@ -1402,7 +1435,7 @@ function DoctorVideoSection() {
       <Reveal className="mx-auto max-w-3xl text-center">
         <Eyebrow>1-minute video · Tamil</Eyebrow>
         <h2 className="mt-4 text-4xl leading-[1.08] sm:text-5xl">
-          Ageing skin, pigmentation or hair fall? Hear it from Dr. Kiruthika.
+          Ageing skin, pigmentation or hair fall? Hear from Karur dermatologist Dr. Kiruthika.
         </h2>
         <p className="mt-5 leading-relaxed text-muted-foreground">
           Dr. S. Kiruthika, dermatologist and cosmetologist with 13 years’ experience, explains how
@@ -1463,7 +1496,7 @@ function WhyChooseSection() {
     <Section id="a-why-choose" tone="paper" className="clinic-list-section">
       <Reveal className="mx-auto max-w-4xl">
         <h2 className="text-center text-4xl leading-[1.08] sm:text-5xl">
-          <span aria-hidden="true">🏥 </span>Why choose Sanjay Rithik Hospital?
+          <span aria-hidden="true">🏥 </span>Why choose Sanjay Rithik Hospital in Karur?
         </h2>
         <ul className="clinic-list mt-10">
           {WHY_CHOOSE.map(([title, text]) => (
@@ -1496,7 +1529,7 @@ function BenefitsSection() {
     <Section id="a-benefits" tone="sand" className="clinic-list-section">
       <Reveal className="mx-auto max-w-4xl">
         <h2 className="text-center text-4xl leading-[1.08] sm:text-5xl">
-          The skin you’ll love for years to come <span aria-hidden="true">✨</span>
+          Skin you’ll love for years, right here in Karur <span aria-hidden="true">✨</span>
         </h2>
         <ul className="clinic-list clinic-list-emoji mt-10">
           {BENEFITS.map(([emoji, title, text]) => (
@@ -1539,7 +1572,7 @@ function AdvancedTreatmentsSection() {
     <Section id="a-advanced-treatments" tone="sand" className="clinic-cards-section">
       <Reveal className="mx-auto max-w-3xl text-center">
         <Eyebrow>Treatments at Sanjay Rithik Hospital</Eyebrow>
-        <h2 className="mt-4 text-4xl leading-[1.08] sm:text-5xl">Advanced treatments, built around you</h2>
+        <h2 className="mt-4 text-4xl leading-[1.08] sm:text-5xl">Advanced skin treatments in Karur, built around you</h2>
         <p className="mt-5 leading-relaxed text-muted-foreground">
           Every plan starts with a free consultation with Dr. S. Kiruthika, who recommends what
           suits your skin, hair and budget.
@@ -1596,8 +1629,8 @@ function LaserAreasSection() {
           </h2>
           <p className="mt-5 leading-relaxed text-muted-foreground">
             From upper lip and chin to full body, including PCOS-related facial hair. Every area is
-            treated with the Triple Wave laser under dermatologist supervision, and your first test
-            patch is free.
+            treated with the Triple Wave laser under dermatologist supervision, and your first
+            consultation is free.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button variant="clay" size="xl" asChild>
@@ -1636,7 +1669,7 @@ function LaserBenefitsSection() {
       <Reveal>
         <p className="section-pill">Benefits</p>
         <h2 className="mt-5 text-4xl leading-[1.08] sm:text-5xl">
-          What life looks like after your laser course
+          Life after laser hair removal in Karur
         </h2>
       </Reveal>
       <ul className="laser-benefit-grid mt-10">
@@ -1665,23 +1698,96 @@ function LaserBenefitsSection() {
  */
 const VIDEO_TESTIMONIALS: ReadonlyArray<{ src: string; poster?: string; name: string; treatment: string }> = [];
 
+const VIDEO_STORY_TOPICS = [
+  "PCOS facial hair",
+  "Acne & acne scars",
+  "Laser hair removal · full body",
+];
+
 function VideoTestimonialsSection() {
-  if (VIDEO_TESTIMONIALS.length === 0) return null;
+  const hasVideos = VIDEO_TESTIMONIALS.length > 0;
   return (
-    <Section id="a-video-testimonials" tone="paper">
-      <Reveal className="mx-auto max-w-3xl text-center">
-        <h2 className="text-4xl leading-[1.08] sm:text-5xl">Hear it from our patients</h2>
-      </Reveal>
-      <ul className="video-testimonial-grid mt-10">
-        {VIDEO_TESTIMONIALS.map((item) => (
-          <li key={item.src}>
-            <video src={item.src} poster={item.poster} controls playsInline preload="none" />
-            <p>
-              Video testimonial · {item.name} – {item.treatment}
-            </p>
-          </li>
-        ))}
-      </ul>
+    <Section id="a-video-testimonials" tone="paper" className="video-stories-section">
+      <h2 className="sr-only">Patient video testimonials</h2>
+      {hasVideos ? (
+        <ul className="video-testimonial-grid">
+          {VIDEO_TESTIMONIALS.map((item) => (
+            <li key={item.src}>
+              <video src={item.src} poster={item.poster} controls playsInline preload="none" />
+              <p>
+                Video testimonial · {item.name} – {item.treatment}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className="video-story-grid">
+          {VIDEO_STORY_TOPICS.map((topic) => (
+            <li key={topic}>
+              <div className="video-story-card" aria-label={`Video testimonial: ${topic}`}>
+                <span className="video-story-play" aria-hidden="true">
+                  <Play className="size-5 fill-current" />
+                </span>
+                <strong>Video testimonial · {topic}</strong>
+                <span>Watch at the clinic or ask us on WhatsApp</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
+        <strong>Individual results vary.</strong> Treatment suitability, sessions, recovery and
+        outcomes depend on individual factors and are confirmed at consultation.
+      </p>
+      <div className="mt-8 flex justify-center">
+        <BookFreeConsultationButton source="a-video-testimonials" />
+      </div>
     </Section>
+  );
+}
+
+/**
+ * Mild ambient particles for the hero: a fixed set of soft dots that drift upward and
+ * twinkle. Positions are deterministic so server and client render the same markup.
+ */
+const HERO_PARTICLES = Array.from({ length: 26 }, (_, index) => ({
+  left: (index * 37) % 100,
+  top: (index * 53) % 100,
+  size: 3 + (index % 4) * 1.5,
+  delay: (index % 9) * -1.7,
+  duration: 12 + (index % 5) * 3,
+  tone: index % 3,
+}));
+
+function HeroParticles() {
+  return (
+    <div className="hero-particles" aria-hidden="true">
+      {HERO_PARTICLES.map((particle, index) => (
+        <span
+          key={index}
+          className={`hero-particle hero-particle-${particle.tone}`}
+          style={{
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
+            width: particle.size,
+            height: particle.size,
+            animationDelay: `${particle.delay}s, ${particle.delay / 2}s`,
+            animationDuration: `${particle.duration}s, ${particle.duration / 3}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Google "G" mark for the location / rating badge that links to the clinic's Google listing. */
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="16" height="16" aria-hidden="true" className="nav-google-icon">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+    </svg>
   );
 }

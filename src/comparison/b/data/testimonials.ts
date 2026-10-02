@@ -8,19 +8,19 @@ export type Testimonial = {
 
 /**
  * Real, publicly posted Google reviews from Sanjay Rithik Hospital's Google Business
- * listing (the same listing linked from the "4.5 · 440 Google reviews" credit elsewhere
+ * listing (the same listing linked from the "4.5 · 447 Google reviews" credit elsewhere
  * on this page). Quotes preserve the reviewer's own words and meaning exactly — only
  * trailing decorative emoji and obvious spacing/typos were lightly cleaned for display.
  * Never alter what a reviewer actually said.
  */
 export const testimonials: Testimonial[] = [
   {
-    name: "Stalin Gates",
-    meta: "Google review",
+    name: "Naveen",
+    meta: "Patient review",
     rating: 5,
     timeAgo: "",
     quote:
-      "I had a excellent experience at Sanjay Rithik Hospital for Anti-Aging Consultation. I especially appreciated friendly staff, clear explanation, cleanliness, and quick service. எனக்கு இந்த சர்வீஸ் ரொம்ப நல்லா இருக்கு",
+      "I do my regular hydra facial at this place. I was very much satisfied with their service, I loved the ambience and they are so gentle towards the customer. Thank you Dr. Kirthiga madam",
   },
   {
     name: "Sathik Basha",

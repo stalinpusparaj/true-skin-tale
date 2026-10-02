@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type FormEvent } from "react";
-import { ArrowRight, Check, Phone } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { WhatsAppIcon as MessageCircle } from "../../../SiteChrome";
 import { Button } from "@/comparison/a/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,8 +92,14 @@ export function LeadForm({
           The clinic will call you to arrange your free consultation with Dr. S. Kiruthika
           (open daily 10 am–2:30 pm and 6–9:30 pm). Your appointment is confirmed on that call.
         </p>
-        <a className="mt-6 inline-flex items-center gap-2 underline" href="tel:+918903009723">
-          <Phone className="size-4" /> Call +91 89030 09723
+        <a
+          className="mt-6 inline-flex items-center gap-2 underline"
+          href="https://wa.me/918903009723"
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => track("whatsapp_clicked", { source: "confirmation" })}
+        >
+          <MessageCircle className="size-4" /> Questions while you wait? WhatsApp us
         </a>
       </div>
     );
@@ -216,13 +222,6 @@ export function LeadForm({
         className="mt-5 flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border text-sm font-medium"
       >
         <MessageCircle className="size-4" /> Prefer WhatsApp? Chat with us
-      </a>
-      <a
-        href="tel:+918903009723"
-        onClick={() => track("phone_clicked", { source })}
-        className="mt-3 block text-center text-xs underline"
-      >
-        Or call +91 89030 09723
       </a>
     </form>
   );

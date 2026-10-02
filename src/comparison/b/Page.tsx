@@ -655,7 +655,7 @@ function Assessment({
       <Reveal className="max-w-3xl">
         <Eyebrow>60-second skin check</Eyebrow>
         <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-          Are you struggling with any of these skin or hair problems?
+          Struggling with skin or hair problems in Karur?
         </h2>
         <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
           Acne that keeps coming back? Dark patches? Hair fall or unwanted hair? Tap what you've
@@ -819,7 +819,7 @@ function TreatmentExplorer({
           <Reveal className="max-w-3xl">
             <Eyebrow>Explore Our Service</Eyebrow>
             <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-              Not sure which treatment is right for you?
+              Not sure which skin treatment in Karur is right for you?
             </h2>
             <p className="mt-5 leading-relaxed text-muted-foreground">
               See how each concern is usually treated, then let the dermatologist recommend what
@@ -1285,7 +1285,7 @@ function CinematicInterlude() {
         </Reveal>
         <Reveal delay={100}>
           <Eyebrow muted>A clear, low-pressure next step</Eyebrow>
-          <h2 className="mt-5 text-5xl leading-[1.02] sm:text-6xl">Nervous about your first visit? Here's what happens.</h2>
+          <h2 className="mt-5 text-5xl leading-[1.02] sm:text-6xl">Nervous about your first visit to our Karur clinic? Here's what happens.</h2>
           <div className="mt-10 space-y-0">
             {steps.map((step, index) => (
               <div
@@ -1420,7 +1420,7 @@ function Proof() {
 const FAQS = [
     [
       "How much does a consultation cost?",
-      "The dermatologist consultation is free. If you are considering laser hair removal, a test patch is also free at your consultation. Treatment costs depend on your concern and the number of sessions, and are explained before anything begins. This page does not collect payment.",
+      "The dermatologist consultation is free. Treatment costs depend on your concern and the number of sessions, and are explained before anything begins. This page does not collect payment.",
     ],
     [
       "Do I need to know which treatment I want?",
@@ -1436,11 +1436,11 @@ const FAQS = [
     ],
     [
       "Is laser hair removal painful or permanent?",
-      "Most people describe a brief snapping or warm sensation. You can feel it for yourself with a free test patch at your consultation before choosing a package. Laser reduces hair growth over a course of sessions; how many you need depends on your skin and hair type, which the dermatologist assesses first.",
+      "Most people describe a brief snapping or warm sensation. Laser reduces hair growth over a course of sessions; how many you need depends on your skin and hair type, which the dermatologist assesses first.",
     ],
     [
       "When is the clinic open?",
-      "Every day, 10 am–2:30 pm and 6–9:30 pm, at 77A, Sengunthapuram Main Road, Karur. Call or WhatsApp +91 89030 09723.",
+      "Every day, 10 am–2:30 pm and 6–9:30 pm, at 77A, Sengunthapuram Main Road, Karur. You can also message us on WhatsApp.",
     ],
   ];
 
@@ -1452,7 +1452,7 @@ function Objections() {
         <Reveal>
           <Eyebrow>Questions are normal</Eyebrow>
           <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-            Questions before your consultation?
+            Questions before your consultation in Karur?
           </h2>
           <p className="mt-6 leading-relaxed text-muted-foreground">
             You don't need to decide on a treatment today.
@@ -1523,9 +1523,9 @@ function Consultation({
     <Section id="b-consultation" tone="sand">
       <div className="grid gap-12 lg:grid-cols-[.82fr_1.18fr] lg:gap-16">
         <Reveal>
-          <Eyebrow muted>Free consultation · Free laser test patch</Eyebrow>
+          <Eyebrow muted>Free consultation</Eyebrow>
           <h2 className="mt-5 text-4xl leading-[1.04] sm:text-[3.4rem]">
-            Ready to finally get answers about your skin?
+            Ready to get answers about your skin in Karur?
           </h2>
           <p className="mt-6 leading-relaxed text-ink-foreground/65">
             You don't need to choose a procedure. Use this visit to understand your skin, realistic

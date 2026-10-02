@@ -8,6 +8,7 @@ import { VersionB } from "./b/Page";
 const groups = [
   ["navigation", "Landing page header"],
   ["hero", "Hero"],
+  ["offer-form", "Free Offer + Booking Form"],
   ["clinic-facts", "Trust / Quick Facts Strip"],
   ["assessment", "Skin Assessment / Skin Check"],
   ["doctor", "Meet Your Dermatologist"],
