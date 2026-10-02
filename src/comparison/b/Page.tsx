@@ -1,6 +1,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   Check,
   Clock3,
@@ -25,7 +26,15 @@ import { cn } from "@/comparison/b/lib/utils";
 import heroImage from "@/comparison/b/assets/anti-aging-hero-v2.jpg";
 import videoPosterImage from "@/assets/hero-portrait.jpg";
 import { TreatmentPhoto } from "../TreatmentPhoto";
-import mirrorImage from "@/comparison/b/assets/mirror-enhanced.png";
+import premiumConcernMirror from "@/assets/premium-concern-mirror.png";
+import headerTreatmentRoom from "@/assets/luxury-glow/header-treatment-room-teal.png";
+import hairScalpConsultation from "@/assets/luxury-glow/hair-scalp-consultation.png";
+import serviceAcneBreakouts from "@/assets/luxury-glow/service-acne-breakouts.png";
+import serviceAntiAgingFirmness from "@/assets/luxury-glow/service-anti-aging-firmness.png";
+import servicePigmentation from "@/assets/luxury-glow/service-pigmentation.png";
+import serviceScarsTexture from "@/assets/luxury-glow/service-scars-texture.png";
+import serviceSensitiveSkin from "@/assets/luxury-glow/service-sensitive-skin.png";
+import serviceTiredDull from "@/assets/luxury-glow/service-tired-dull.png";
 import antiAgingReelVideo from "@/assets/videos/anti-aging-treatment-reel.mp4?url";
 import hospitalLogo from "@/comparison/b/assets/hospital-logo.png";
 import doctorKiruthika from "@/comparison/b/assets/doctor-kiruthika.jpg";
@@ -173,6 +182,7 @@ export function VersionB({ render, sharedAgeSelection }: { render: (sections: Re
 "services": <Services onSelect={setExploredConcern} />,
 "medical": <MedicalTrust />,
 "doctor": <Doctor />,
+"treatments-before-age": <TreatmentExplorer concern={exploredConcern} sectionId="b-treatment-options-age" variant="service" />,
 "age": <AgeExperience onSelection={setAgeJourney} />,
 "video": <CinematicInterlude />,
 "testimonials": <TestimonialGrid />,
@@ -555,12 +565,12 @@ function PainMirror() {
       <div className="grid gap-12 lg:grid-cols-[.88fr_1.12fr] lg:items-center lg:gap-20">
         <Reveal>
           <img
-            src={mirrorImage}
-            alt="Woman quietly noticing changes in her reflection"
+            src={premiumConcernMirror}
+            alt="Woman noticing her skin in a mirror"
             loading="lazy"
             width={1200}
             height={800}
-            className="h-[28rem] w-full rounded-3xl object-cover shadow-lift sm:h-[36rem]"
+            className="concern-premium-image h-[28rem] w-full rounded-3xl object-cover shadow-lift sm:h-[36rem]"
           />
         </Reveal>
         <Reveal delay={100}>
@@ -754,6 +764,19 @@ const CONCERN_TO_TREATMENT: Record<string, string> = {
   "Overall ageing": "Overall Rejuvenation",
 };
 
+const SERVICE_IMAGES: Record<string, string> = {
+  "Acne & Breakouts": serviceAcneBreakouts,
+  "Hair & Scalp Concerns": hairScalpConsultation,
+  "Scars & Texture": serviceScarsTexture,
+  "Sensitive Skin": serviceSensitiveSkin,
+  "Fine Lines": serviceAntiAgingFirmness,
+  Firmness: serviceAntiAgingFirmness,
+  Pigmentation: servicePigmentation,
+  Texture: serviceScarsTexture,
+  "Tired / Dull Appearance": serviceTiredDull,
+  "Overall Rejuvenation": serviceAntiAgingFirmness,
+};
+
 function treatmentIndexForConcern(concern?: string) {
   const label = concern ? CONCERN_TO_TREATMENT[concern] : undefined;
   if (!concern) return 0;
@@ -761,14 +784,113 @@ function treatmentIndexForConcern(concern?: string) {
   return index === -1 ? 0 : index;
 }
 
-function TreatmentExplorer({ concern }: { concern?: string | undefined }) {
+function TreatmentExplorer({
+  concern,
+  sectionId = "b-treatment-options",
+  variant = "concern",
+}: {
+  concern?: string | undefined;
+  sectionId?: string;
+  variant?: "concern" | "service";
+}) {
   const [active, setActive] = useState(() => treatmentIndexForConcern(concern));
   useEffect(() => {
     setActive(treatmentIndexForConcern(concern));
   }, [concern]);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const selected = TREATMENTS[active]!;
+  const isService = variant === "service";
+  const detailId = `${sectionId}-detail`;
+  function scrollServices(direction: "left" | "right") {
+    const element = carouselRef.current;
+    if (!element) return;
+    element.scrollBy({
+      left: direction === "left" ? -420 : 420,
+      behavior: "smooth",
+    });
+  }
+  if (isService) {
+    return (
+      <Section id={sectionId} tone="sand" className="overflow-hidden">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <Reveal className="max-w-3xl">
+            <Eyebrow>Explore Our Service</Eyebrow>
+            <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
+              Premium dermatology services for focused skin goals.
+            </h2>
+            <p className="mt-5 leading-relaxed text-muted-foreground">
+              Browse key skin, hair and laser service pathways with visual cues before discussing
+              what is suitable for you.
+            </p>
+          </Reveal>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => scrollServices("left")}
+              className="inline-flex size-12 items-center justify-center rounded-full border border-border bg-card text-hospital-blue shadow-soft transition-colors hover:border-clay hover:bg-warm hover:text-clay"
+              aria-label="Show previous services"
+            >
+              <ArrowLeft className="size-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollServices("right")}
+              className="inline-flex size-12 items-center justify-center rounded-full border border-border bg-card text-hospital-blue shadow-soft transition-colors hover:border-clay hover:bg-warm hover:text-clay"
+              aria-label="Show next services"
+            >
+              <ArrowRight className="size-5" />
+            </button>
+          </div>
+        </div>
+        <Reveal delay={80} className="mt-10">
+          <div
+            ref={carouselRef}
+            className="flex snap-x gap-5 overflow-hidden pb-5"
+            role="list"
+            aria-label="Skin services"
+          >
+            {TREATMENTS.map((item, index) => (
+              <article
+                key={item.concern}
+                role="listitem"
+                className="group w-[300px] shrink-0 snap-start overflow-hidden rounded-[1.35rem] border border-border bg-card shadow-soft transition-all hover:-translate-y-1 hover:border-clay/60 sm:w-[370px] lg:w-[410px]"
+              >
+                <div className="aspect-[1.34] overflow-hidden bg-warm">
+                  <img
+                    src={SERVICE_IMAGES[item.concern] ?? headerTreatmentRoom}
+                    alt={item.concern}
+                    loading="lazy"
+                    draggable={false}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-7">
+                  <h3 className="font-display text-3xl leading-none text-foreground">
+                    {item.concern}
+                  </h3>
+                  <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                    {item.noticing}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActive(index);
+                      track("service_explored", { concern: item.concern });
+                    }}
+                    className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-hospital-blue transition-colors hover:text-clay"
+                  >
+                    Learn More <ArrowRight className="size-4" />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </Reveal>
+      </Section>
+    );
+  }
   return (
-    <Section id="b-treatment-options" tone="sand">
+    <Section id={sectionId} tone="sand">
       <Reveal className="max-w-3xl">
         <Eyebrow>Explore by concern</Eyebrow>
         <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
@@ -793,7 +915,7 @@ function TreatmentExplorer({ concern }: { concern?: string | undefined }) {
                 key={item.concern}
                 type="button"
                 role="tab"
-                id={`concern-tab-${index}`}
+                id={`${sectionId}-tab-${index}`}
                 tabIndex={active === index ? 0 : -1}
                 onKeyDown={(event) => {
                   const offset = ["ArrowRight", "ArrowDown"].includes(event.key) ? 1 : ["ArrowLeft", "ArrowUp"].includes(event.key) ? -1 : 0;
@@ -801,10 +923,10 @@ function TreatmentExplorer({ concern }: { concern?: string | undefined }) {
                   event.preventDefault();
                   const next = event.key === "Home" ? 0 : event.key === "End" ? TREATMENTS.length - 1 : (index + offset + TREATMENTS.length) % TREATMENTS.length;
                   setActive(next);
-                  document.getElementById(`concern-tab-${next}`)?.focus();
+                  document.getElementById(`${sectionId}-tab-${next}`)?.focus();
                 }}
                 aria-selected={active === index}
-                aria-controls="b-concern-detail"
+                aria-controls={detailId}
                 onClick={() => {
                   setActive(index);
                   track("treatment_explored", { concern: item.concern });
@@ -822,9 +944,9 @@ function TreatmentExplorer({ concern }: { concern?: string | undefined }) {
             ))}
           </div>
           <article
-            id="b-concern-detail"
+            id={detailId}
             role="tabpanel"
-            aria-labelledby={`concern-tab-${active}`}
+            aria-labelledby={`${sectionId}-tab-${active}`}
             className="rounded-3xl border border-border bg-card p-7 shadow-soft sm:p-10"
             aria-live="polite"
           >

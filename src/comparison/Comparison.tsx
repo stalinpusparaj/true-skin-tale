@@ -13,6 +13,7 @@ const groups = [
   ["services", "Dermatology Services"],
   ["doctor", "Meet Your Dermatologist"],
   ["video", "Consultation Journey / How It Works"],
+  ["treatments-before-age", "Treatment Options by Concern"],
   ["age", "Interactive Age Preview"],
   ["testimonials", "Patient Testimonials"],
   ["before-after", "Before & After Gallery"],
@@ -24,7 +25,7 @@ const groups = [
 
 const hiddenSections: Record<"a" | "b", readonly string[]> = {
   a: ["pain", "treatments", "video", "testimonials", "questions", "consultation", "footer"],
-  b: ["navigation", "hero", "doctor", "age"],
+  b: ["navigation", "hero", "doctor", "treatments", "age"],
 } as const;
 
 function Sections({ a, b }: { a: Record<string, ReactNode>; b: Record<string, ReactNode> }) {

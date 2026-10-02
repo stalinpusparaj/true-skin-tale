@@ -30,6 +30,7 @@ import pinkLaserTreatment from "@/assets/luxury-glow/pink-laser-treatment.png";
 import pinkTreatmentRoom from "@/assets/luxury-glow/pink-treatment-room.png";
 import legSkincareGlow from "@/assets/luxury-glow/leg-skincare-glow.png";
 import headerTreatmentRoom from "@/assets/luxury-glow/header-treatment-room-teal.png";
+import heroTreatmentGlow from "@/assets/hero-treatment-glow.png";
 import antiAgingReelVideo from "@/comparison/a/assets/videos/anti-aging-treatment-reel.mp4?url";
 
 const AgeJourney = lazy(() =>
@@ -125,22 +126,37 @@ function HeroHeaderGrid({ pointer }: { pointer: { x: number; y: number; active: 
 
 function HeroImageDeck() {
   return (
-    <figure className="hero-visual" aria-label="Clinic image showcase with motion-reactive thumbnails.">
-      <div className="hero-image-frame">
+    <figure className="premium-hero-visual" aria-label="Premium dermatology hero image.">
+      <div className="premium-hero-main">
         <img
-          src={headerTreatmentRoom}
-          alt="Dermatology consultation at Sanjay Rithik Hospital"
-          className="hero-slide is-active"
+          src={heroTreatmentGlow}
+          alt="Premium dermatology treatment with clinical skincare"
+          className="premium-hero-main-image"
           draggable={false}
         />
-        <div className="hero-image-shade" />
-        <div className="hero-stat-card">
-          <strong>99% Satisfaction</strong>
-          <span>500+ Clients</span>
-          <span>19 Years Experience</span>
+        <div className="premium-stat-card premium-stat-card-top">
+          <span>12k+</span>
+          <strong>Glow results</strong>
+        </div>
+        <div className="premium-stat-card premium-stat-card-bottom">
+          <span>98%</span>
+          <strong>Satisfaction</strong>
         </div>
       </div>
-      <figcaption className="hero-drag-hint">Move across the header <span aria-hidden="true">✦</span></figcaption>
+      <div className="premium-consult-bar">
+        <div>
+          <span>Choose concern</span>
+          <strong>Anti-Aging</strong>
+        </div>
+        <div>
+          <span>Clinic location</span>
+          <strong>Karur</strong>
+        </div>
+        <div>
+          <span>Consultant</span>
+          <strong>Dr. Kiruthika</strong>
+        </div>
+      </div>
     </figure>
   );
 }
@@ -199,49 +215,37 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
       >
         Skip to consultation request
       </a>,
-"navigation": <header className="bg-ink text-ink-foreground">
-        <div className="header-navigation-inner mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
-          <div className="header-brand flex min-w-0 items-center gap-3">
+"navigation": <header className="premium-nav">
+        <div className="premium-nav-inner">
+          <a href="#a-top" className="premium-brand" aria-label="Sanjay Rithik Hospital home">
             <img
               src={hospitalLogo}
-              alt=""
+              alt="Sanjay Rithik Hospital logo"
               width={48}
               height={48}
-              className="size-10 shrink-0 object-contain sm:size-12"
             />
             <span>
-              <span className="block font-display text-lg sm:text-2xl">Sanjay Rithik Hospital</span>
-              <span className="text-[.6rem] uppercase tracking-widest text-ink-foreground/70">
-                Skin care · Karur
-              </span>
+              <strong>Sanjay Rithik Hospital</strong>
+              <small>Skin Laser · Cosmetology</small>
             </span>
+          </a>
+          <div className="premium-nav-trust" aria-label="Clinic trust details">
+            <span><MapPin className="size-4" /> Local clinic · Karur</span>
+            <span><Star className="size-4 fill-current" /> 4.5 · 440 Google reviews</span>
           </div>
-          <div className="header-trust-items order-3 flex w-full items-center gap-4 border-t border-white/15 pt-3 text-xs text-ink-foreground/75 sm:order-2 sm:w-auto sm:border-t-0 sm:pt-0">
-            <span className="flex items-center gap-1.5">
-              <MapPin className="size-4 shrink-0 text-clay" />
-              <span>Local clinic · Karur</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Star className="size-4 shrink-0 fill-current text-[#f4b942]" />
-              <span>4.5 · 440 Google reviews</span>
-            </span>
-          </div>
-          <div className="header-action-buttons flex shrink-0 items-center gap-2 sm:order-3">
-            <Button variant="clay" size="pill" className="header-consultation-button" asChild>
-              <TrackedLink
-                href="#b-consultation"
-                event="consultation_cta_clicked"
-                source="navigation"
-              >
-                Book a Consultation <ArrowRight />
-              </TrackedLink>
-            </Button>
-          </div>
+          <TrackedLink
+            href="#b-consultation"
+            event="consultation_cta_clicked"
+            source="navigation"
+            className="premium-nav-cta"
+          >
+            Book a Consultation <ArrowRight />
+          </TrackedLink>
         </div>
       </header>,
 "hero": <section
         id="a-top"
-        className="relative isolate overflow-hidden bg-ink text-ink-foreground"
+        className="premium-hero relative isolate overflow-hidden bg-ink text-ink-foreground"
         style={{ width: "100vw", maxWidth: "none", marginLeft: "calc(50% - 50vw)" }}
         onPointerMove={(event) => {
           const bounds = event.currentTarget.getBoundingClientRect();
@@ -258,33 +262,34 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
         }}
         onPointerLeave={() => setHeroPointer({ x: 0, y: 0, active: false })}
       >
-        <HeroHeaderGrid pointer={heroPointer} />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,76,100,.96)_0%,rgba(6,76,100,.82)_42%,rgba(6,76,100,.42)_100%)]" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(0deg,rgba(6,76,100,.78)_0%,transparent_45%,rgba(6,76,100,.3)_100%)]" />
-        <div className="hero-inner mx-auto grid min-h-[min(760px,calc(100vh-80px))] max-w-6xl items-center gap-10 px-5 pb-16 pt-28 sm:px-8 sm:pb-20 lg:grid-cols-[.9fr_1.1fr] lg:gap-14 lg:pb-24">
-          <div className="hero-copy max-w-3xl">
-            <h1 className="mt-5 max-w-3xl text-[2.8rem] leading-[1.02] sm:text-6xl lg:text-[5.2rem]">
-              Smooth <span className="text-clay">Skin</span>
-              <span className="mt-3 block">Starts <span className="text-clay">Here</span></span>
+        <div className="premium-hero-bg" />
+        <div className="premium-hero-waves" aria-hidden="true" />
+        <div className="hero-inner premium-hero-inner">
+          <div className="hero-copy premium-hero-copy">
+            <p className="premium-kicker">Luxury clinical skincare</p>
+            <h1>
+              The Secret to Your Ultimate Radiant Glow
+              <span>Dermatology, laser and skin wellness at Sanjay Rithik Hospital.</span>
             </h1>
-            <p className="mt-7 max-w-2xl text-base leading-relaxed text-ink-foreground/80 sm:text-lg">
-              Professional laser hair removal designed for comfort, precision, and long-lasting results.
+            <p className="premium-hero-text">
+              Bespoke treatments designed by specialists to support your natural brilliance with
+              calm, personalised dermatology care.
             </p>
-            <div className="hero-actions mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="premium-hero-actions">
               <Button variant="clay" size="xl" asChild>
                 <TrackedLink href="#b-skin-check" event="hero_assessment_click" source="hero">
-                  Start AI Consultation <ArrowRight />
+                  Book Consultation <ArrowRight />
                 </TrackedLink>
               </Button>
-              <Button variant="outline" size="xl" className="border-white/30 bg-white/5 text-white hover:bg-white/10" asChild>
-                <TrackedLink href="#b-consultation" event="consultation_cta_clicked" source="hero">
-                  Explore Services
+              <Button variant="outline" size="xl" className="premium-secondary-cta" asChild>
+                <TrackedLink href="#b-treatment-options" event="treatment_options_click" source="hero">
+                  Explore Treatments
                 </TrackedLink>
               </Button>
             </div>
-            <p className="mt-5 text-xs text-ink-foreground/65">
-              60-second skin check · No contact details needed to start · Karur clinic
-            </p>
+            <div className="premium-hero-badges">
+              <span><ShieldCheck className="size-4" /> Luxury clinical skincare</span>
+            </div>
           </div>
           <HeroImageDeck />
         </div>
