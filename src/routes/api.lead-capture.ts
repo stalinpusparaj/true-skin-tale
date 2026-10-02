@@ -72,6 +72,75 @@ function toMarkdown(payload: LeadPayload): string {
   return lines.join("\n\n");
 }
 
+const LEAD_SOURCE = "Sanjay Rithik skin landing page";
+
+function enquirySummary(payload: LeadPayload, name: string, phone: string, isRepeat: boolean) {
+  const concern =
+    typeof payload.primary_concern === "string" && payload.primary_concern
+      ? payload.primary_concern
+      : "Not given";
+  const source = payload["source"];
+  const form = typeof source === "string" && source ? source : "website";
+  return [
+    `${isRepeat ? "Repeat enquiry" : "New enquiry"} · ${LEAD_SOURCE}`,
+    `Received ${new Date().toISOString().slice(0, 16).replace("T", " ")} UTC via the ${form} form.`,
+    "",
+    "**Contact (as submitted)**",
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    `Concern: ${concern}`,
+    "",
+    "**All submitted details**",
+    toMarkdown(payload),
+  ].join("\n");
+}
+
+function text(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+/** Map a landing-page enquiry onto the workspace's existing custom Opportunity lead fields. */
+function opportunityFields(
+  payload: LeadPayload,
+  name: string,
+  phone: string,
+  referer: string | null,
+): Record<string, unknown> {
+  const concern = text(payload.primary_concern);
+  const preferredTime = text(payload["preferred_time"]);
+  const notes = [
+    concern && `Concern: ${concern}`,
+    preferredTime && `Preferred time: ${preferredTime}`,
+    text(payload["result_profile"]) && `Skin-check result: ${text(payload["result_profile"])}`,
+    text(payload["device"]) && `Device: ${text(payload["device"])}`,
+    text(payload["referrer"]) && `Referrer: ${text(payload["referrer"])}`,
+  ].filter(Boolean);
+  const fields: Record<string, unknown> = {
+    stage: "NEW",
+    leadContactName: name,
+    leadPhone: phone,
+    leadForm: text(payload["source"]) || text(payload.lead_type) || "website",
+    leadLandingPage: referer ?? LEAD_SOURCE,
+    leadIndustry: "Dermatology clinic",
+    leadPreferredChannel: "Phone / WhatsApp",
+    leadWantsCall: true,
+    leadConsentContact: payload["consent_status"] === true,
+    leadConsentWhatsapp: payload["consent_whatsapp"] === true,
+    leadSubmissions: 1,
+  };
+  const optional: Record<string, string> = {
+    leadEmail: text(payload.email),
+    leadGoals: concern,
+    leadTimeline: preferredTime,
+    leadUtmSource: text(payload["utm_source"]),
+    leadUtmMedium: text(payload["utm_medium"]),
+    leadUtmCampaign: text(payload["utm_campaign"]),
+    leadNotes: notes.join("\n"),
+  };
+  for (const [key, value] of Object.entries(optional)) if (value) fields[key] = value;
+  return fields;
+}
+
 async function twentyFetch<T>(
   baseUrl: string,
   apiKey: string,
@@ -155,7 +224,53 @@ export const Route = createFileRoute("/api/lead-capture")({
             personId = created.data.createPerson.id;
           }
 
-          const leadTypeLabel = (payload.lead_type ?? "consultation_booking").replace(/_/g, " ");
+          // Mirror the CRM's existing website-form convention: one opportunity per person
+          // ("Name · Source"), with a "New enquiry" / "Repeat enquiry" note on it.
+          const isRepeat = Boolean(existingPerson?.id);
+          let opportunityId: string | undefined;
+          try {
+            const openOpportunity = await twentyFetch<{
+              data: { opportunities: Array<{ id: string; leadSubmissions?: number | null }> };
+            }>(
+              baseUrl,
+              apiKey,
+              `/rest/opportunities?filter=pointOfContactId[eq]:${personId}&limit=1`,
+              { method: "GET" },
+            );
+            const existingOpportunity = openOpportunity.data.opportunities[0];
+            const fields = opportunityFields(payload, name, phone, request.headers.get("referer"));
+            if (existingOpportunity?.id) {
+              opportunityId = existingOpportunity.id;
+              // Repeat enquiry: count it and refresh what the person told us this time.
+              const { stage: _stage, leadSubmissions: _count, ...latest } = fields;
+              await twentyFetch(baseUrl, apiKey, `/rest/opportunities/${opportunityId}`, {
+                method: "PATCH",
+                body: JSON.stringify({
+                  ...latest,
+                  leadSubmissions: (existingOpportunity.leadSubmissions ?? 1) + 1,
+                }),
+              }).catch((error) => console.error("Twenty CRM opportunity update failed", error));
+            } else {
+              const base = { name: `${name} · ${LEAD_SOURCE}`, pointOfContactId: personId };
+              const create = (body: Record<string, unknown>) =>
+                twentyFetch<{ data: { createOpportunity: { id: string } } }>(
+                  baseUrl,
+                  apiKey,
+                  "/rest/opportunities",
+                  { method: "POST", body: JSON.stringify(body) },
+                );
+              // If the workspace's custom lead fields ever change, still record the opportunity.
+              const createdOpportunity = await create({ ...base, ...fields }).catch((error) => {
+                console.error("Twenty CRM opportunity fields rejected; retrying without them", error);
+                return create(base);
+              });
+              opportunityId = createdOpportunity.data.createOpportunity.id;
+            }
+          } catch (error) {
+            // The lead is still recorded on the person if the opportunity step fails.
+            console.error("Twenty CRM opportunity step failed", error);
+          }
+
           const note = await twentyFetch<{ data: { createNote: { id: string } } }>(
             baseUrl,
             apiKey,
@@ -163,8 +278,8 @@ export const Route = createFileRoute("/api/lead-capture")({
             {
               method: "POST",
               body: JSON.stringify({
-                title: `${leadTypeLabel} — ${new Date().toLocaleString("en-IN")}`,
-                bodyV2: { markdown: toMarkdown(payload) },
+                title: `${isRepeat ? "Repeat enquiry" : "New enquiry"}: ${name}`,
+                bodyV2: { markdown: enquirySummary(payload, name, phone, isRepeat) },
               }),
             },
           );
@@ -173,8 +288,17 @@ export const Route = createFileRoute("/api/lead-capture")({
             method: "POST",
             body: JSON.stringify({ noteId: note.data.createNote.id, targetPersonId: personId }),
           });
+          if (opportunityId) {
+            await twentyFetch(baseUrl, apiKey, "/rest/noteTargets", {
+              method: "POST",
+              body: JSON.stringify({
+                noteId: note.data.createNote.id,
+                targetOpportunityId: opportunityId,
+              }),
+            });
+          }
 
-          return json({ ok: true, personId });
+          return json({ ok: true, personId, opportunityId });
         } catch (error) {
           console.error("Twenty CRM lead capture failed", error);
           return json({ error: "The CRM could not be reached." }, 502);

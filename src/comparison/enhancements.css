@@ -2621,3 +2621,685 @@
     bottom: 18px;
   }
 }
+
+/* Booking-first hero: short form beside the headline, header shows phone + hours. */
+.enhanced-site .premium-hero-form {
+  width: 100%;
+  max-width: 460px;
+  justify-self: end;
+  scroll-margin-top: 96px;
+}
+
+.enhanced-site .premium-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 22px;
+}
+
+.enhanced-site .premium-hero-actions {
+  margin-top: 26px;
+}
+
+.enhanced-site .premium-nav-trust a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+}
+
+.enhanced-site .premium-nav-cta .nav-cta-short {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .enhanced-site .premium-hero-form {
+    justify-self: stretch;
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 700px) {
+  .enhanced-site .premium-brand {
+    min-width: 0;
+  }
+
+  .enhanced-site .premium-brand strong {
+    font-size: 15px;
+    line-height: 1.15;
+  }
+
+  .enhanced-site .premium-brand small {
+    display: none;
+  }
+
+  .enhanced-site .premium-nav-cta {
+    min-width: 0;
+    width: auto;
+    justify-self: end;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .enhanced-site .premium-nav-cta .nav-cta-long {
+    display: none;
+  }
+
+  .enhanced-site .premium-nav-cta .nav-cta-short {
+    display: inline;
+  }
+
+  .enhanced-site .premium-hero-inner {
+    padding-top: 32px;
+    gap: 28px;
+  }
+
+  .enhanced-site .premium-hero-copy h1 {
+    font-size: clamp(40px, 11vw, 54px);
+  }
+
+  .enhanced-site .premium-hero-text {
+    font-size: 16px;
+  }
+
+}
+
+/* The hero is a dark (.bg-ink) section; keep the white form card's copy readable. */
+.enhanced-site #a-top .premium-hero-form :is(p, label span, summary span) {
+  color: #68787A !important;
+}
+
+.enhanced-site #a-top .premium-hero-form .eyebrow {
+  color: #075E6B !important;
+}
+
+.enhanced-site #a-top .premium-hero-form p.text-destructive,
+.enhanced-site #a-top .premium-hero-form p[role="alert"] {
+  color: var(--destructive) !important;
+}
+
+.enhanced-site .premium-nav-trust > * {
+  white-space: nowrap;
+}
+
+/* Free-consultation offer card in the hero (dental-page style specific offer). */
+.enhanced-site .premium-offer {
+  max-width: 34rem;
+  margin-top: 26px;
+  padding: 20px 22px;
+  border: 1px solid rgb(143 230 238 / 35%);
+  border-radius: 22px;
+  background: rgb(255 255 255 / 8%);
+  backdrop-filter: blur(6px);
+}
+
+.enhanced-site #a-top .premium-offer .premium-offer-tag {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 10px;
+  background: #8fe6ee;
+  color: #053f4b !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.enhanced-site #a-top .premium-offer .premium-offer-title {
+  margin-top: 12px;
+  color: #FFFFFF !important;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.enhanced-site .premium-offer-text {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.enhanced-site .premium-offer-cta {
+  margin-top: 16px;
+}
+
+/* Hero photo sits behind the copy and fades into the teal background. */
+.enhanced-site .premium-hero-photo {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: -1;
+  width: 58%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .32;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
+  pointer-events: none;
+}
+
+/* WhatsApp button that stays on screen on tablet/desktop; phones use the sticky bar. */
+.enhanced-site .floating-whatsapp {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 60;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 20px 0 16px;
+  border-radius: 999px;
+  background: #25D366;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 22%);
+}
+
+.enhanced-site .floating-whatsapp:hover {
+  background: #1ebe5a;
+}
+
+@media (min-width: 768px) {
+  .enhanced-site .floating-whatsapp {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 1100px) {
+  .enhanced-site .premium-hero-photo {
+    width: 100%;
+    opacity: .16;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+    mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+  }
+}
+
+/* Phones: headline → offer → form on the first screens; details follow. */
+@media (max-width: 700px) {
+  .enhanced-site #a-top .premium-hero-copy {
+    display: contents;
+  }
+
+  .enhanced-site #a-top .premium-kicker { order: 1; }
+  .enhanced-site #a-top .premium-hero-copy h1 { order: 2; margin-top: 0; }
+  .enhanced-site #a-top .premium-offer { order: 3; margin-top: 0; padding: 16px 18px; }
+  .enhanced-site #a-top .premium-hero-form { order: 4; }
+  .enhanced-site #a-top .premium-hero-text { order: 5; margin-top: 0; }
+  .enhanced-site #a-top .premium-hero-badges { order: 6; margin-top: 0; }
+  .enhanced-site #a-top .premium-hero-actions { order: 7; margin-top: 0; }
+
+  .enhanced-site #a-top .premium-hero-inner {
+    gap: 18px;
+  }
+
+  .enhanced-site #a-top .premium-offer .premium-offer-title {
+    font-size: 17px;
+  }
+
+  /* The form follows directly, so the offer's jump button is redundant here. */
+  .enhanced-site .premium-offer-cta {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Light theme (dental-page style): white header, pale-teal hero,
+   no dark section backgrounds. Teal stays as the accent colour.
+   ============================================================ */
+.enhanced-site .premium-nav {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid #dcebec !important;
+  color: #183438 !important;
+  box-shadow: 0 4px 18px rgb(7 94 107 / 6%);
+}
+
+.enhanced-site .premium-brand strong { color: #0b4f5a !important; }
+.enhanced-site .premium-brand small { color: #5c7477 !important; }
+.enhanced-site .premium-nav-trust { color: #2f4a4e !important; }
+.enhanced-site .premium-nav-trust svg { color: #0b8a99 !important; }
+.enhanced-site .premium-nav-cta {
+  background: linear-gradient(135deg, #0b8a99 0%, #18AEC0 100%) !important;
+  border-color: transparent !important;
+}
+
+.enhanced-site #a-top.premium-hero {
+  background:
+    radial-gradient(circle at 85% 20%, rgb(24 174 192 / 14%), transparent 40%),
+    linear-gradient(120deg, #f4fbfb 0%, #e9f6f7 55%, #fbf7f2 100%) !important;
+  color: #183438 !important;
+}
+
+.enhanced-site #a-top .premium-hero-bg,
+.enhanced-site #a-top .premium-hero-waves {
+  display: none;
+}
+
+.enhanced-site #a-top .premium-hero-photo {
+  opacity: .5;
+}
+
+.enhanced-site #a-top .premium-kicker { color: #0b7c8a !important; }
+.enhanced-site #a-top .premium-hero-copy h1 { color: #0b3f48 !important; }
+.enhanced-site #a-top .premium-hero-copy h1 span { color: #0b8a99 !important; }
+.enhanced-site #a-top .premium-hero-text { color: #3f5659 !important; }
+
+.enhanced-site #a-top .premium-hero-badges span {
+  border-color: #cfe5e7 !important;
+  background: #FFFFFF !important;
+  color: #2f4a4e !important;
+}
+
+.enhanced-site #a-top .premium-hero-badges .fill-current { color: #F5A623; }
+
+.enhanced-site #a-top .premium-secondary-cta {
+  border-color: #b9dadd !important;
+  background: #FFFFFF !important;
+  color: #0b4f5a !important;
+}
+
+.enhanced-site #a-top .premium-hero-actions > *:first-child {
+  background: linear-gradient(135deg, #0b8a99 0%, #18AEC0 100%) !important;
+  color: #FFFFFF !important;
+}
+
+.enhanced-site #a-top .premium-offer {
+  border: 1px solid #b9dadd;
+  background: #FFFFFF;
+  box-shadow: 0 14px 34px rgb(7 94 107 / 10%);
+}
+
+.enhanced-site #a-top .premium-offer .premium-offer-tag {
+  background: #075E6B;
+  color: #FFFFFF !important;
+}
+
+.enhanced-site #a-top .premium-offer .premium-offer-title { color: #0b3f48 !important; }
+.enhanced-site #a-top .premium-offer-text { color: #3f5659; }
+
+.enhanced-site #a-top .premium-hero-form form {
+  box-shadow: 0 18px 44px rgb(7 94 107 / 14%);
+}
+
+@media (max-width: 1100px) {
+  .enhanced-site #a-top .premium-hero-photo { opacity: .22; }
+}
+
+/* Former dark sections now use light tones; fix leftovers that assumed a dark background. */
+.enhanced-site #b-consultation [class*="border-white"],
+.enhanced-site #a-age-journey [class*="border-white"] {
+  border-color: #d8e6e7 !important;
+}
+
+.enhanced-site .site-footer-light {
+  border-top: 1px solid #dcebec;
+  background: #f4fbfb;
+  color: #5c7477;
+}
+
+.enhanced-site .site-footer-light p { color: #5c7477; }
+.enhanced-site .site-footer-light .font-display { color: #0b4f5a; }
+.enhanced-site .site-footer-light > div { border-color: #dcebec; }
+
+.enhanced-site .comparison-video .section-shell,
+.enhanced-site #a-age-journey.section-shell {
+  background: #f4fbfb !important;
+  color: #183438 !important;
+}
+
+.enhanced-site .comparison-video .section-shell .mt-8.rounded-3xl {
+  background: #FFFFFF !important;
+  border-color: #cfe5e7 !important;
+}
+
+.enhanced-site .comparison-video .section-shell :is(h2, h3, strong) { color: #0b3f48 !important; }
+.enhanced-site .comparison-video .section-shell :is(p, li, span):not(button *) { color: #4f6366 !important; }
+.enhanced-site .comparison-video .section-shell .eyebrow { color: #0b7c8a !important; }
+
+.enhanced-site footer.site-footer-light :is(p, span, li) { color: #5c7477 !important; }
+.enhanced-site footer.site-footer-light .font-display { color: #0b4f5a !important; }
+
+.enhanced-site #a-before-after .premium-gallery-feature figcaption {
+  background: rgb(255 255 255 / 90%) !important;
+  color: #183438 !important;
+  backdrop-filter: blur(6px);
+}
+
+.enhanced-site #a-before-after .premium-gallery-feature figcaption :is(p, span, strong, h3) {
+  color: #183438 !important;
+}
+
+.enhanced-site #a-before-after .premium-gallery-feature {
+  background: #e9f6f7 !important;
+}
+
+.enhanced-site #a-age-journey.section-shell :is(h2, h3) { color: #0b3f48 !important; }
+.enhanced-site #a-age-journey.section-shell > div > div:first-child :is(p, span) { color: #4f6366 !important; }
+.enhanced-site #a-age-journey.section-shell .eyebrow { color: #0b7c8a !important; }
+
+/* Age simulator panel: light card instead of a dark app window. */
+.enhanced-site #a-age-journey #a-age-preview-panel,
+.enhanced-site #a-age-journey #a-age-preview-panel .age-lab {
+  background: #FFFFFF !important;
+  color: #183438 !important;
+  border: 1px solid #d8e6e7;
+  box-shadow: 0 18px 44px rgb(7 94 107 / 10%);
+}
+
+.enhanced-site #a-age-journey #a-age-preview-panel :is(p, span, li, label) { color: #4f6366 !important; }
+.enhanced-site #a-age-journey #a-age-preview-panel :is(h2, h3, h4, strong) { color: #0b3f48 !important; }
+.enhanced-site #a-age-journey #a-age-preview-panel .eyebrow { color: #0b7c8a !important; }
+.enhanced-site #a-age-journey #a-age-preview-panel [class*="border-white"] { border-color: #d8e6e7 !important; }
+
+.enhanced-site #a-age-journey #a-age-preview-panel .age-stage-grid button {
+  background: #f4fbfb !important;
+  border-color: #d8e6e7 !important;
+}
+
+.enhanced-site #a-age-journey #a-age-preview-panel .age-stage-grid button[aria-pressed="true"] {
+  background: #e3f4f6 !important;
+  border-color: #0b8a99 !important;
+}
+
+.enhanced-site #a-age-journey #a-age-preview-panel .age-stage-grid img { background: #e9f6f7 !important; }
+
+/* Pills on the photo itself and filled buttons keep white text. */
+.enhanced-site #a-age-journey #a-age-preview-panel :is(button[aria-pressed="true"], [class*="bg-clay"], [class*="bg-gradient-clay"], [class*="bg-ink"]) :is(span, p),
+.enhanced-site #a-age-journey #a-age-preview-panel :is([class*="bg-clay"], [class*="bg-gradient-clay"]) {
+  color: #FFFFFF !important;
+}
+.enhanced-site #a-age-journey #a-age-preview-panel .age-comparison-portrait span { color: #FFFFFF !important; }
+
+.enhanced-site footer.site-footer-light {
+  background: #f4fbfb !important;
+  background-image: none !important;
+}
+
+/* Outline buttons in the age panel were styled for a dark background. */
+.enhanced-site #a-age-journey #a-age-preview-panel :is(a, button):not([class*="bg-"]):not([aria-pressed]) {
+  border: 1px solid #b9dadd !important;
+  color: #0b4f5a !important;
+}
+.enhanced-site #a-age-journey #a-age-preview-panel :is(a, button).bg-transparent.text-ink-foreground {
+  border-color: #b9dadd !important;
+  color: #0b4f5a !important;
+}
+.enhanced-site #a-age-journey #a-age-preview-panel .age-stage-grid button[aria-pressed="true"] :is(span, p) { color: #0b3f48 !important; }
+
+/* Dental-page style sections: doctor video, "Why choose" list, benefits list. */
+.enhanced-site .clinic-video-frame {
+  overflow: hidden;
+  max-width: 960px;
+  margin: 0 auto;
+  border-radius: 28px;
+  background: #e9f6f7;
+  box-shadow: 0 22px 50px rgb(7 94 107 / 14%);
+}
+
+.enhanced-site .clinic-video-frame video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.enhanced-site .clinic-video-topics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 960px;
+  margin: 22px auto 0;
+}
+
+.enhanced-site .clinic-video-topics li {
+  padding: 6px 14px;
+  border: 1px solid #cfe5e7;
+  border-radius: 999px;
+  background: #f4fbfb;
+  color: #0b4f5a !important;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.enhanced-site .clinic-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid #cfe0e1;
+}
+
+.enhanced-site .clinic-list li:first-child {
+  border-top: 1px solid #cfe0e1;
+}
+
+.enhanced-site .clinic-list li p {
+  color: #2f4a4e !important;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.enhanced-site .clinic-list li strong {
+  color: #0b3f48 !important;
+  font-weight: 700;
+}
+
+.enhanced-site .clinic-list .clinic-list-icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #0b4f5a;
+  color: #FFFFFF;
+}
+
+.enhanced-site .clinic-list-emoji-icon {
+  flex: none;
+  width: 28px;
+  font-size: 22px;
+  line-height: 1.5;
+  color: initial !important;
+}
+
+.enhanced-site .clinic-cta {
+  border-radius: 999px !important;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+@media (max-width: 700px) {
+  .enhanced-site .clinic-list li p { font-size: 16px; }
+  .enhanced-site .clinic-video-frame { border-radius: 20px; }
+  .enhanced-site .clinic-cta { width: 100%; letter-spacing: .02em; }
+}
+
+/* Advanced treatments cards (dental-page "Built Around You" grid, light theme). */
+.enhanced-site .treatment-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.enhanced-site .treatment-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 24px;
+  border: 1px solid #d8e6e7;
+  border-radius: 24px;
+  background: #FFFFFF;
+  text-align: center;
+  box-shadow: 0 14px 34px rgb(7 94 107 / 8%);
+}
+
+.enhanced-site .treatment-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #e3f4f6 0%, #c9ecef 100%);
+  color: #0b7c8a;
+}
+
+.enhanced-site .treatment-card-icon svg { width: 34px; height: 34px; }
+
+.enhanced-site .treatment-card h3 {
+  margin-top: 18px;
+  color: #0b3f48 !important;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.enhanced-site .treatment-card p {
+  margin-top: 10px;
+  color: #4f6366 !important;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.enhanced-site .treatment-card-check {
+  display: inline;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  color: #0b8a99;
+  vertical-align: -3px;
+}
+
+/* "Who is this for" laser chips. */
+.enhanced-site .section-pill {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #dff3f5;
+  color: #0b7c8a !important;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.enhanced-site .laser-areas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+}
+
+.enhanced-site .laser-area-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.enhanced-site .laser-area-chips li {
+  padding: 12px 20px;
+  border: 1px solid #d8e6e7;
+  border-radius: 16px;
+  background: #FFFFFF;
+  color: #183438 !important;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 8px 20px rgb(7 94 107 / 6%);
+}
+
+/* "What life looks like after your course" benefit cards. */
+.enhanced-site .laser-benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.enhanced-site .laser-benefit-grid li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: #FFFFFF;
+  color: #183438 !important;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 10px 26px rgb(7 94 107 / 8%);
+}
+
+.enhanced-site .laser-benefit-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: #18AEC0;
+}
+
+.enhanced-site .video-testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.enhanced-site .video-testimonial-grid video {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: 20px;
+  background: #e9f6f7;
+  object-fit: cover;
+}
+
+.enhanced-site .video-testimonial-grid p {
+  margin-top: 10px;
+  color: #183438 !important;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 1000px) {
+  .enhanced-site .treatment-card-grid,
+  .enhanced-site .video-testimonial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .enhanced-site .laser-benefit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .enhanced-site .laser-areas { grid-template-columns: 1fr; gap: 32px; }
+}
+
+@media (max-width: 600px) {
+  .enhanced-site .treatment-card-grid,
+  .enhanced-site .video-testimonial-grid { grid-template-columns: 1fr; }
+  .enhanced-site .laser-benefit-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .enhanced-site .laser-benefit-grid li { min-height: 64px; padding: 14px; font-size: 14px; }
+  .enhanced-site .laser-area-chips li { padding: 10px 14px; font-size: 14px; }
+}
+
+@media (max-width: 600px) {
+  .enhanced-site .treatment-card-grid { gap: 12px; }
+
+  .enhanced-site .treatment-card {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    column-gap: 14px;
+    align-items: start;
+    padding: 16px;
+    border-radius: 18px;
+    text-align: left;
+  }
+
+  .enhanced-site .treatment-card-icon {
+    grid-row: span 2;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+
+  .enhanced-site .treatment-card-icon svg { width: 26px; height: 26px; }
+  .enhanced-site .treatment-card h3 { margin-top: 2px; font-size: 18px; }
+  .enhanced-site .treatment-card p { margin-top: 4px; font-size: 14px; }
+  .enhanced-site .treatment-card-check { display: none; }
+
+  .enhanced-site .clinic-cta {
+    font-size: 14px !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap;
+  }
+}

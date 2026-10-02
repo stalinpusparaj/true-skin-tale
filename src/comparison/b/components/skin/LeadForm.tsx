@@ -227,7 +227,7 @@ export function LeadForm({
       <div className="mb-7 flex items-center justify-between gap-3 border-b border-border pb-5">
         <span className="flex items-center gap-3">
           <CalendarCheck className="size-5 text-clay" />
-          <span className="text-sm font-medium">Request your dermatologist consultation</span>
+          <span className="text-sm font-medium">Book your free dermatologist consultation</span>
         </span>
       </div>
       {ageJourney && (
@@ -276,7 +276,7 @@ export function LeadForm({
         {errors["consent"] && <p id="b-error-consent" role="alert" className="mt-2 text-xs text-destructive">{errors["consent"]}</p>}
         <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row">
           <Button type="submit" variant="clay" size="xl" className="flex-1" disabled={submitting}>
-            {submitting ? "Sending request…" : "Request Consultation"} <ArrowRight />
+            {submitting ? "Sending request…" : "Book My Free Consultation"} <ArrowRight />
           </Button>
         </div>
       </div>

@@ -182,7 +182,7 @@ export function VersionB({ render, sharedAgeSelection }: { render: (sections: Re
 "services": <Services onSelect={setExploredConcern} />,
 "medical": <MedicalTrust />,
 "doctor": <Doctor />,
-"treatments-before-age": <TreatmentExplorer concern={exploredConcern} sectionId="b-treatment-options-age" variant="service" />,
+"treatments-before-age": <TreatmentExplorer concern={exploredConcern} sectionId="b-treatment-options" variant="service" />,
 "age": <AgeExperience onSelection={setAgeJourney} />,
 "video": <CinematicInterlude />,
 "testimonials": <TestimonialGrid />,
@@ -428,7 +428,7 @@ function TrustStrip() {
           className="flex items-center gap-2 text-clay hover:underline"
         >
           <Star className="size-4 shrink-0 fill-current" aria-hidden="true" />
-          4.5 · 440 Google reviews
+          4.5 · 447 Google reviews
         </a>
       </div>
     </section>
@@ -653,11 +653,14 @@ function Assessment({
   return (
     <Section id="b-skin-check" tone="paper">
       <Reveal className="max-w-3xl">
-        <Eyebrow>Your Skin Check</Eyebrow>
-        <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">Your 60-second Skin Check</h2>
+        <Eyebrow>60-second skin check</Eyebrow>
+        <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
+          Are you struggling with any of these skin or hair problems?
+        </h2>
         <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
-          Choose what you've noticed first. This is not a diagnosis—it simply helps organise your
-          concerns before consultation.
+          Acne that keeps coming back? Dark patches? Hair fall or unwanted hair? Tap what you've
+          noticed first. It isn't a diagnosis; it helps Dr. Kiruthika understand you before your
+          free consultation.
         </p>
       </Reveal>
       <Reveal delay={100} className="mt-12">
@@ -816,11 +819,11 @@ function TreatmentExplorer({
           <Reveal className="max-w-3xl">
             <Eyebrow>Explore Our Service</Eyebrow>
             <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-              Premium dermatology services for focused skin goals.
+              Not sure which treatment is right for you?
             </h2>
             <p className="mt-5 leading-relaxed text-muted-foreground">
-              Browse key skin, hair and laser service pathways with visual cues before discussing
-              what is suitable for you.
+              See how each concern is usually treated, then let the dermatologist recommend what
+              suits your skin at your free consultation.
             </p>
           </Reveal>
           <div className="flex gap-3">
@@ -1214,7 +1217,7 @@ function CinematicInterlude() {
     "You decide what feels right",
   ];
   return (
-    <Section tone="ink" className="relative overflow-hidden">
+    <Section tone="paper" className="relative overflow-hidden">
       <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-16">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-white/10">
@@ -1282,7 +1285,7 @@ function CinematicInterlude() {
         </Reveal>
         <Reveal delay={100}>
           <Eyebrow muted>A clear, low-pressure next step</Eyebrow>
-          <h2 className="mt-5 text-5xl leading-[1.02] sm:text-6xl">What happens when you book?</h2>
+          <h2 className="mt-5 text-5xl leading-[1.02] sm:text-6xl">Nervous about your first visit? Here's what happens.</h2>
           <div className="mt-10 space-y-0">
             {steps.map((step, index) => (
               <div
@@ -1399,7 +1402,7 @@ function Proof() {
               <Star className="size-5 fill-current" aria-hidden="true" />
             </span>
             <div>
-              <p className="text-sm font-medium">4.5 · 440 Google reviews</p>
+              <p className="text-sm font-medium">4.5 · 447 Google reviews</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Supplied clinic-listing snapshot—not clinical outcome evidence.
               </p>
@@ -1417,7 +1420,7 @@ function Proof() {
 const FAQS = [
     [
       "How much does a consultation cost?",
-      "Please ask the clinic for the current consultation fee before your visit. Treatment costs depend on the option discussed. This page does not collect payment.",
+      "The dermatologist consultation is free. If you are considering laser hair removal, a test patch is also free at your consultation. Treatment costs depend on your concern and the number of sessions, and are explained before anything begins. This page does not collect payment.",
     ],
     [
       "Do I need to know which treatment I want?",
@@ -1432,12 +1435,12 @@ const FAQS = [
       "Recovery depends on the procedure and your skin. Discuss expected downtime and aftercare with the dermatologist before deciding.",
     ],
     [
-      "Do I have to upload a photo?",
-      "No. You can request a consultation without using either interactive tool. The optional age preview asks for separate permission before processing your photo.",
+      "Is laser hair removal painful or permanent?",
+      "Most people describe a brief snapping or warm sensation. You can feel it for yourself with a free test patch at your consultation before choosing a package. Laser reduces hair growth over a course of sessions; how many you need depends on your skin and hair type, which the dermatologist assesses first.",
     ],
     [
-      "Does the age preview show my treatment result?",
-      "No. It is a visual simulation for exploration, not a medical assessment or a prediction of your treatment outcome.",
+      "When is the clinic open?",
+      "Every day, 10 am–2:30 pm and 6–9:30 pm, at 77A, Sengunthapuram Main Road, Karur. Call or WhatsApp +91 89030 09723.",
     ],
   ];
 
@@ -1517,12 +1520,12 @@ function Consultation({
   faceAreas?: string[] | undefined;
 }) {
   return (
-    <Section id="b-consultation" tone="ink">
+    <Section id="b-consultation" tone="sand">
       <div className="grid gap-12 lg:grid-cols-[.82fr_1.18fr] lg:gap-16">
         <Reveal>
-          <Eyebrow muted>Start with clarity</Eyebrow>
+          <Eyebrow muted>Free consultation · Free laser test patch</Eyebrow>
           <h2 className="mt-5 text-4xl leading-[1.04] sm:text-[3.4rem]">
-            Your Personalised Dermatology Consultation
+            Ready to finally get answers about your skin?
           </h2>
           <p className="mt-6 leading-relaxed text-ink-foreground/65">
             You don't need to choose a procedure. Use this visit to understand your skin, realistic
@@ -1549,8 +1552,8 @@ function Consultation({
             ))}
           </div>
           <p className="mt-6 flex items-center gap-3 text-sm text-ink-foreground/70">
-            <Clock3 className="size-4 text-clay" /> The clinic contacts you to confirm a suitable
-            time.
+            <Clock3 className="size-4 text-clay" /> Open daily 10 am–2:30 pm · 6–9:30 pm. The
+            clinic calls you to confirm a suitable time.
           </p>
           <p className="mt-4 flex items-center gap-3 text-sm text-ink-foreground/70">
             <MapPin className="size-4 text-clay" /> 77A, Sengunthapuram Main Road, Karur 639002.
@@ -1600,7 +1603,7 @@ function FinalClose() {
 
 function Footer() {
   return (
-    <footer className="bg-ink px-5 pb-12 pt-10 text-ink-foreground/45 sm:px-8">
+    <footer className="site-footer-light px-5 pb-12 pt-10 sm:px-8">
       <div className="mx-auto grid max-w-6xl gap-8 border-t border-white/10 pt-8 text-xs sm:grid-cols-[1fr_auto] sm:items-end">
         <div>
           <div className="flex items-center gap-3">

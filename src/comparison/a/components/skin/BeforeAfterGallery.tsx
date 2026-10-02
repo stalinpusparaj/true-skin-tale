@@ -85,7 +85,7 @@ export function BeforeAfterGallery() {
       <div className="premium-gallery-shell">
         <header className="premium-gallery-header">
           <p>Reference comparisons</p>
-          <h2>Premium Skin Wellness Gallery</h2>
+          <h2>Want to see what&apos;s possible before you decide?</h2>
           <p>
             A cleaner editorial view of skin clarity, consultation-led planning and realistic
             reference outcomes, kept in a teal clinical wellness direction.

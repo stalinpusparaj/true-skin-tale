@@ -60,6 +60,7 @@ export function LeadForm({
         age_journey_selection: ageJourney ?? null,
         source,
         consent_status: true,
+        consent_whatsapp: true,
         photo_processing_consent: false,
         landing_page_identifier: "anti-aging-consultation-karur",
         timestamp: new Date().toISOString(),
@@ -88,8 +89,8 @@ export function LeadForm({
         <Check className="size-9 text-foreground" />
         <h3 className="mt-5 text-3xl">Your enquiry has reached the clinic.</h3>
         <p className="mt-4 leading-relaxed text-muted-foreground">
-          The team will contact you to discuss the consultation fee and arrange a suitable
-          appointment. Your appointment is confirmed separately.
+          The clinic will call you to arrange your free consultation with Dr. S. Kiruthika
+          (open daily 10 am–2:30 pm and 6–9:30 pm). Your appointment is confirmed on that call.
         </p>
         <a className="mt-6 inline-flex items-center gap-2 underline" href="tel:+918903009723">
           <Phone className="size-4" /> Call +91 89030 09723
@@ -111,8 +112,8 @@ export function LeadForm({
       }}
       className="rounded-3xl border border-border bg-card p-6 text-foreground shadow-lift sm:p-8"
     >
-      <p className="eyebrow text-muted-foreground">Let’s arrange your visit</p>
-      <h3 className="mt-3 text-3xl">Request a consultation</h3>
+      <p className="eyebrow text-muted-foreground">Takes 30 seconds · No payment online</p>
+      <h3 className="mt-3 text-3xl">Book your free consultation</h3>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         Just your name and mobile number to get started. The clinic will help you choose a date.
       </p>
@@ -201,7 +202,7 @@ export function LeadForm({
           ? "Sending your enquiry…"
           : source === "age_preview"
             ? "Send enquiry & continue"
-            : "Request a Consultation"}
+            : "Book My Free Consultation"}
         <ArrowRight />
       </Button>
       <p className="mt-3 text-center text-xs text-muted-foreground">

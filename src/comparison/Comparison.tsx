@@ -3,29 +3,36 @@ import type { AgeJourneySelection } from "./a/components/skin/AgeJourney";
 import { VersionA } from "./a/Page";
 import { VersionB } from "./b/Page";
 
+// Booking-first order: offer + form in the hero, then one concern picker, the doctor,
+// one treatment explorer, proof, process, objections, and the closing form.
 const groups = [
   ["navigation", "Landing page header"],
   ["hero", "Hero"],
   ["clinic-facts", "Trust / Quick Facts Strip"],
-  ["pain", "Skin Concerns / Recognition"],
   ["assessment", "Skin Assessment / Skin Check"],
-  ["treatments", "Treatment Options by Concern"],
-  ["services", "Dermatology Services"],
   ["doctor", "Meet Your Dermatologist"],
-  ["video", "Consultation Journey / How It Works"],
+  ["doctor-video", "Doctor Video"],
+  ["advanced-treatments", "Advanced Treatments"],
+  ["laser-areas", "Laser Hair Removal / Who Is This For"],
+  ["laser-benefits", "Laser Hair Removal / Benefits"],
   ["treatments-before-age", "Treatment Options by Concern"],
-  ["age", "Interactive Age Preview"],
   ["testimonials", "Patient Testimonials"],
+  ["video-testimonials", "Video Testimonials"],
   ["before-after", "Before & After Gallery"],
+  ["benefits", "Benefits / The Skin You'll Love"],
+  ["video", "Consultation Journey / How It Works"],
+  ["why-choose", "Why Choose Sanjay Rithik Hospital"],
   ["questions", "FAQ / Questions & Concerns"],
   ["clinic", "Visit Sanjay Rithik Hospital"],
   ["consultation", "Consultation / Appointment"],
+  ["age", "Interactive Age Preview"],
   ["footer", "Footer"],
+  ["sticky", "Mobile booking bar"],
 ] as const;
 
 const hiddenSections: Record<"a" | "b", readonly string[]> = {
   a: ["pain", "treatments", "video", "testimonials", "questions", "consultation", "footer"],
-  b: ["navigation", "hero", "doctor", "treatments", "age"],
+  b: ["navigation", "hero", "doctor", "treatments", "age", "sticky"],
 } as const;
 
 function Sections({ a, b }: { a: Record<string, ReactNode>; b: Record<string, ReactNode> }) {

@@ -32,7 +32,7 @@ export function TestimonialGrid() {
         <Reveal className="max-w-3xl">
           <p className="eyebrow text-clay">Patient experiences</p>
           <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-            What our patients say
+            Will it work for someone like me? Hear it from our patients.
           </h2>
           <p className="mt-5 leading-relaxed text-muted-foreground">
             Real reviews from Sanjay Rithik Hospital's Google Business listing — people who came in
