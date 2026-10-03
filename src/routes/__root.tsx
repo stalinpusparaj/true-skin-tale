@@ -113,10 +113,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   const gtmId = import.meta.env["VITE_GTM_CONTAINER_ID"] as string | undefined;
+  const gaMeasurementId = import.meta.env["VITE_GA_MEASUREMENT_ID"] as string | undefined;
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        {gaMeasurementId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};window.gtag=gtag;gtag('js',new Date());gtag('config','${gaMeasurementId}',{send_page_view:true});`,
+              }}
+            />
+          </>
+        )}
         {gtmId && (
           <script
             // GTM's official snippet: the id is a public container id (not a secret),
