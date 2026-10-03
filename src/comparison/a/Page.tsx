@@ -293,7 +293,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
           <Reveal>
             <p className="section-pill">Free consultation</p>
             <h2 className="mt-5 text-4xl leading-[1.08] sm:text-5xl">
-              Your first dermatology visit in Karur is free.
+              Want advice in Karur before deciding on treatment?
             </h2>
             <p className="mt-5 leading-relaxed text-muted-foreground">
               Book a free consultation with Dr. S. Kiruthika at Sanjay Rithik Hospital, Karur. She
@@ -360,10 +360,14 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
         <div className="grid items-center gap-6 md:grid-cols-[1fr_auto]">
           <div>
             <Eyebrow muted>Educational interactive experience</Eyebrow>
-            <h2 className="mt-4 text-4xl">Curious how your face might change with age?</h2>
+            <h2 className="mt-4 text-4xl">Curious about how faces change with age?</h2>
             <p className="mt-4 max-w-2xl leading-relaxed text-ink-foreground/75">
               Explore natural age-related facial changes with the sample or your own photo.
               This educational visual simulation is not a prediction of ageing or treatment results.
+            </p>
+            <p className="mt-3 max-w-2xl text-sm font-semibold leading-relaxed">
+              This is a visual illustration. It does not predict how you will age or show what
+              treatment will do.
             </p>
           </div>
         </div>
@@ -394,7 +398,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
           <div>
             <Eyebrow>Visit us</Eyebrow>
             <h2 className="mt-4 text-4xl">
-              Where are we in Karur, and when can you visit?
+              Where is the clinic in Karur, and when can you visit?
             </h2>
             <p className="mt-5 leading-relaxed">
               <strong>Sanjay Rithik Hospital</strong><br />77A, Sengunthapuram Main Road,
@@ -402,8 +406,8 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
               Karur 639002.
             </p>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              Please contact the clinic to confirm the dermatologist’s availability and consultation
-              fee before visiting.
+              Open daily 10 am–2:30 pm and 6–9:30 pm. Contact the clinic to confirm the doctor’s
+              availability and arrange your free consultation.
             </p>
           </div>
         </div>
@@ -425,7 +429,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
             <ol className="mt-7 space-y-4 text-sm">
               {[
                 "Send your name and mobile number.",
-                "Discuss the fee and arrange a visit with the clinic.",
+                "Arrange your free consultation with the clinic.",
                 "Meet the dermatologist and understand your options.",
               ].map((step, i) => (
                 <li key={step} className="flex gap-3">
@@ -911,7 +915,7 @@ function DoctorSection() {
         </figure>
         <div>
           <Eyebrow muted>Your dermatologist</Eyebrow>
-          <h2 className="mt-4 text-4xl sm:text-5xl">Who will treat you in Karur? Meet Dr. S. Kiruthika</h2>
+          <h2 className="mt-4 text-4xl sm:text-5xl">Who will help you understand your skin in Karur?</h2>
           <p className="mt-3 text-sm font-medium">MBBS, DDVL · Dermatologist &amp; Cosmetologist · 13 years’ experience</p>
           <p className="mt-5 leading-relaxed text-muted-foreground">
             Dr. S. Kiruthika has treated skin, hair and nail conditions for 13 years at Sanjay Rithik
@@ -1428,7 +1432,7 @@ function DoctorVideoSection() {
       <Reveal className="mx-auto max-w-3xl text-center">
         <Eyebrow>1-minute video · Tamil</Eyebrow>
         <h2 className="mt-4 text-4xl leading-[1.08] sm:text-5xl">
-          Ageing skin, pigmentation or hair fall? Hear from Karur dermatologist Dr. Kiruthika.
+          Want to hear the doctor explain it?
         </h2>
         <p className="mt-5 leading-relaxed text-muted-foreground">
           Dr. S. Kiruthika, dermatologist and cosmetologist with 13 years’ experience, explains how
@@ -1489,7 +1493,7 @@ function WhyChooseSection() {
     <Section id="a-why-choose" tone="paper" className="clinic-list-section">
       <Reveal className="mx-auto max-w-4xl">
         <h2 className="text-center text-4xl leading-[1.08] sm:text-5xl">
-          <span aria-hidden="true">🏥 </span>Why choose Sanjay Rithik Hospital in Karur?
+          <span aria-hidden="true">🏥 </span>Why visit Sanjay Rithik Hospital in Karur?
         </h2>
         <ul className="clinic-list mt-10">
           {WHY_CHOOSE.map(([title, text]) => (
@@ -1522,7 +1526,7 @@ function BenefitsSection() {
     <Section id="a-benefits" tone="sand" className="clinic-list-section">
       <Reveal className="mx-auto max-w-4xl">
         <h2 className="text-center text-4xl leading-[1.08] sm:text-5xl">
-          Skin you’ll love for years, right here in Karur <span aria-hidden="true">✨</span>
+          What can you get help with here?
         </h2>
         <ul className="clinic-list clinic-list-emoji mt-10">
           {BENEFITS.map(([emoji, title, text]) => (
@@ -1565,7 +1569,7 @@ function AdvancedTreatmentsSection() {
     <Section id="a-advanced-treatments" tone="sand" className="clinic-cards-section">
       <Reveal className="mx-auto max-w-3xl text-center">
         <Eyebrow>Treatments at Sanjay Rithik Hospital</Eyebrow>
-        <h2 className="mt-4 text-4xl leading-[1.08] sm:text-5xl">Advanced skin treatments in Karur, built around you</h2>
+        <h2 className="mt-4 text-4xl leading-[1.08] sm:text-5xl">What options can you discuss with the doctor?</h2>
         <p className="mt-5 leading-relaxed text-muted-foreground">
           Every plan starts with a free consultation with Dr. S. Kiruthika, who recommends what
           suits your skin, hair and budget.
@@ -1618,7 +1622,7 @@ function LaserAreasSection() {
         <Reveal>
           <p className="section-pill">Who is this for</p>
           <h2 className="mt-5 text-4xl leading-[1.08] sm:text-5xl">
-            Laser hair removal for women &amp; men in Karur
+            Looking for help with unwanted hair?
           </h2>
           <p className="mt-5 leading-relaxed text-muted-foreground">
             From upper lip and chin to full body, including PCOS-related facial hair. Every area is
@@ -1662,7 +1666,7 @@ function LaserBenefitsSection() {
       <Reveal>
         <p className="section-pill">Benefits</p>
         <h2 className="mt-5 text-4xl leading-[1.08] sm:text-5xl">
-          Life after laser hair removal in Karur
+          Questions about reducing unwanted hair?
         </h2>
       </Reveal>
       <ul className="laser-benefit-grid mt-10">
@@ -1717,12 +1721,12 @@ function VideoTestimonialsSection() {
         <ul className="video-story-grid">
           {VIDEO_STORY_TOPICS.map((topic) => (
             <li key={topic}>
-              <div className="video-story-card" aria-label={`Video testimonial: ${topic}`}>
+              <div className="video-story-card" aria-label={`Patient video not available on this page: ${topic}`}>
                 <span className="video-story-play" aria-hidden="true">
                   <Play className="size-5 fill-current" />
                 </span>
-                <strong>Video testimonial · {topic}</strong>
-                <span>Watch at the clinic or ask us on WhatsApp</span>
+                <strong>Patient video · {topic}</strong>
+                <span>Not available to watch on this page. Ask the clinic on WhatsApp.</span>
               </div>
             </li>
           ))}

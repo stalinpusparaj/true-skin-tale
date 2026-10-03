@@ -155,7 +155,8 @@ export function SkinAssessment({
     onComplete(withAreas);
     onProfile?.(profile);
     setSkinCheck({ answers: withAreas, profile });
-    track("assessment_completed", { concern: withAreas["concern"] });
+    // Skin answers stay out of analytics; only progress through the quiz is tracked.
+    track("assessment_completed");
     setStage("result");
   }
 
@@ -163,7 +164,7 @@ export function SkinAssessment({
     moved.current = true;
     const id = STEPS[step]!;
     if (step === 0) track("assessment_started");
-    track("assessment_question_answered", { question: id, answer: value, question_number: step + 1 });
+    track("assessment_question_answered", { question: id, question_number: step + 1 });
     const next = { ...answers, [id]: value };
     setAnswers(next);
     if (step === STEPS.length - 1) finish(next);
@@ -209,7 +210,7 @@ export function SkinAssessment({
       setSending(false);
       return;
     }
-    track("skin_profile_lead_captured", { concern: answers["concern"], profile: concern.profile.name });
+    track("skin_profile_lead_captured");
     setSending(false);
     setStage("done");
   }

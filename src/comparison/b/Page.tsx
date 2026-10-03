@@ -655,7 +655,7 @@ function Assessment({
       <Reveal className="max-w-3xl">
         <Eyebrow>20-second skin check · free</Eyebrow>
         <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-          Struggling with skin or hair problems in Karur?
+          Try a quick skin check
         </h2>
         <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
           Acne that keeps coming back? Dark patches? Hair fall or unwanted hair? Tap what you've
@@ -819,7 +819,7 @@ function TreatmentExplorer({
           <Reveal className="max-w-3xl">
             <Eyebrow>Explore Our Service</Eyebrow>
             <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-              Not sure which skin treatment in Karur is right for you?
+              Not sure where to start?
             </h2>
             <p className="mt-5 leading-relaxed text-muted-foreground">
               See how each concern is usually treated, then let the dermatologist recommend what
@@ -1285,7 +1285,7 @@ function CinematicInterlude() {
         </Reveal>
         <Reveal delay={100}>
           <Eyebrow muted>A clear, low-pressure next step</Eyebrow>
-          <h2 className="mt-5 text-5xl leading-[1.02] sm:text-6xl">Nervous about your first visit to our Karur clinic? Here's what happens.</h2>
+          <h2 className="mt-5 text-5xl leading-[1.02] sm:text-6xl">What happens at your first visit?</h2>
           <div className="mt-10 space-y-0">
             {steps.map((step, index) => (
               <div
@@ -1452,7 +1452,7 @@ function Objections() {
         <Reveal>
           <Eyebrow>Questions are normal</Eyebrow>
           <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
-            Questions before your consultation in Karur?
+            What would you like to know before booking?
           </h2>
           <p className="mt-6 leading-relaxed text-muted-foreground">
             You don't need to decide on a treatment today.
@@ -1525,7 +1525,7 @@ function Consultation({
         <Reveal>
           <Eyebrow muted>Free consultation</Eyebrow>
           <h2 className="mt-5 text-4xl leading-[1.04] sm:text-[3.4rem]">
-            Ready to get answers about your skin in Karur?
+            Ready to ask the Karur doctor your questions?
           </h2>
           <p className="mt-6 leading-relaxed text-ink-foreground/65">
             You don't need to choose a procedure. Use this visit to understand your skin, realistic
