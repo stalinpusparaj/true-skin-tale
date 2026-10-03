@@ -653,7 +653,7 @@ function Assessment({
   return (
     <Section id="b-skin-check" tone="paper">
       <Reveal className="max-w-3xl">
-        <Eyebrow>60-second skin check</Eyebrow>
+        <Eyebrow>20-second skin check · free</Eyebrow>
         <h2 className="mt-5 text-4xl leading-[1.04] sm:text-5xl">
           Struggling with skin or hair problems in Karur?
         </h2>

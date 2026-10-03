@@ -120,6 +120,8 @@ type LeadTemperature = "HOT" | "WARM" | "COLD";
  */
 const QUIZ_LABELS: Record<string, string> = {
   concern: "Main concern",
+  impact: "How it affects them",
+  timing: "Wants to start",
   area: "Area noticed most",
   duration: "Noticed since",
   tried: "Already tried",
@@ -162,6 +164,10 @@ function scoreLead(payload: LeadPayload, submissions: number) {
   const quiz = quizAnswers(payload);
   if (/previous clinical/i.test(quiz["tried"] ?? "")) score += 5;
   if (/open to dermatologist/i.test(quiz["comfort"] ?? "")) score += 5;
+  // Skin-check game signals: urgency and "products keep failing" are the strongest intent.
+  if (/this week/i.test(quiz["timing"] ?? "")) score += 10;
+  else if (/month/i.test(quiz["timing"] ?? "")) score += 5;
+  if (/keeps coming back|confidence/i.test(quiz["impact"] ?? "")) score += 5;
   if (submissions > 1) score += 20;
   score = Math.min(100, score);
   const temperature: LeadTemperature = score >= 70 ? "HOT" : score >= 45 ? "WARM" : "COLD";

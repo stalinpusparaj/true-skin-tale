@@ -1,9 +1,19 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  CircleDot,
+  Droplets,
+  Feather,
+  HelpCircle,
+  Lock,
+  Sparkles,
+  Sun,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { setSkinCheck } from "@/comparison/skinCheckStore";
-import { ArrowLeft, ArrowRight, Check, Clock3, Heart, MapPin, RefreshCw, Sparkles, Target } from "lucide-react";
-import { Button } from "@/comparison/b/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { getAttribution, track } from "@/comparison/b/lib/analytics";
 import { cn } from "@/comparison/b/lib/utils";
 
@@ -11,199 +21,109 @@ export type Answers = Record<string, string>;
 
 export type ResultProfile = { name: string; dims: Record<string, number> };
 
-type Question = {
-  id: string;
-  title: string;
-  help: string;
-  options: string[];
-  insight?: string;
+/**
+ * The skin check is a short game: two taps (plus an optional "when"), then a useful
+ * result with the booking form right beside it. Fewer questions and no gate before the
+ * result means more visitors reach the form; answers still flow to the CRM and score.
+ */
+type Concern = {
+  value: string;
+  label: string;
+  hint: string;
+  icon: LucideIcon;
+  result: [string, string];
+  profile: ResultProfile;
 };
 
-const QUESTIONS: Question[] = [
+const CONCERNS: Concern[] = [
   {
-    id: "concern",
-    title: "What concerns you most?",
-    help: "Choose the change you notice first. There is no wrong answer.",
-    options: [
-      "Fine lines",
-      "Acne",
-      "Hair loss",
-      "Dark circles",
-      "Scars",
-      "Pigmentation",
-      "Sensitive skin",
-      "Something else",
-      "I'm not sure",
+    value: "Fine lines",
+    label: "Fine lines",
+    hint: "Wrinkles or ageing changes",
+    icon: Feather,
+    result: [
+      "Natural-looking ageing care",
+      "Ask whether skin boosters, HIFU, Botox or other options fit your goals. Dr. Kiruthika explains what suits your skin, and what doesn't.",
     ],
-    insight:
-      "Noted — this is one of the most common reasons people first book a skin consultation.",
+    profile: { name: "Early Prevention Profile", dims: { "Fine Lines": 78, Firmness: 45, Texture: 40, Pigmentation: 25 } },
   },
   {
-    id: "area",
-    title: "Where do you notice it most?",
-    help: "This helps organise the areas you may want to discuss with the dermatologist.",
-    options: ["Forehead", "Around eyes", "Cheeks", "Around mouth", "Jawline", "Entire face"],
-  },
-  {
-    id: "duration",
-    title: "When did you start noticing the change?",
-    help: "A recent change and a gradual change may lead to different questions at consultation.",
-    options: ["Recently", "6–12 months", "1–3 years", "Several years"],
-  },
-  {
-    id: "tried",
-    title: "What have you tried?",
-    help: "Your previous experience helps the dermatologist understand what has—and hasn't—helped.",
-    options: [
-      "Skincare",
-      "Facials",
-      "Home remedies",
-      "Previous clinical treatments",
-      "Nothing yet",
+    value: "Acne",
+    label: "Acne",
+    hint: "Breakouts or acne marks",
+    icon: CircleDot,
+    result: [
+      "A clear acne plan",
+      "A dermatologist can find the pattern behind recurring acne, marks or scars and explain a realistic treatment path, so you stop guessing with products.",
     ],
+    profile: { name: "Acne & Skin Health Profile", dims: { "Fine Lines": 20, Firmness: 20, Texture: 68, Pigmentation: 62 } },
   },
   {
-    id: "goal",
-    title: "What result matters most?",
-    help: "The result you value should guide the conversation more than a treatment trend.",
-    options: [
-      "Look fresher",
-      "Improve texture",
-      "Reduce visible lines",
-      "Improve firmness",
-      "Improve pigmentation",
-      "Understand my options",
+    value: "Hair loss",
+    label: "Hair loss",
+    hint: "Shedding or thinning",
+    icon: Droplets,
+    result: [
+      "A cause-first hair assessment",
+      "Before choosing PRP or any other treatment, Dr. Kiruthika checks your scalp and explains what may be driving the hair fall.",
     ],
-    insight: "Most people who feel this way still want to look like themselves — just fresher.",
+    profile: { name: "Hair & Scalp Consultation Profile", dims: { "Fine Lines": 20, Firmness: 20, Texture: 30, Pigmentation: 20 } },
   },
   {
-    id: "comfort",
-    title: "What kind of approach are you comfortable exploring?",
-    help: "This does not commit you to a treatment. It simply makes your preferences clear.",
-    options: [
-      "Minimal downtime",
-      "Non-invasive options",
-      "Open to dermatologist recommendations",
-      "Not sure yet",
+    value: "Pigmentation",
+    label: "Pigmentation",
+    hint: "Dark patches or uneven tone",
+    icon: Sun,
+    result: [
+      "A proper pigmentation assessment",
+      "Different dark patches need different approaches. Identify yours first, before spending more on creams that don't work.",
     ],
+    profile: { name: "Tone & Clarity Profile", dims: { "Fine Lines": 25, Firmness: 30, Texture: 45, Pigmentation: 82 } },
+  },
+  {
+    value: "Laser hair removal",
+    label: "Unwanted hair",
+    hint: "Laser for face or body hair",
+    icon: Zap,
+    result: [
+      "A laser suitability consultation",
+      "Ask about dermatologist-supervised laser hair reduction in Karur: suitable areas, expected sessions, comfort and cost, before you choose a package.",
+    ],
+    profile: { name: "Laser Hair Reduction Profile", dims: { "Fine Lines": 10, Firmness: 10, Texture: 35, Pigmentation: 30 } },
+  },
+  {
+    value: "Something else",
+    label: "Something else",
+    hint: "Sensitive skin, scars or other",
+    icon: HelpCircle,
+    result: [
+      "A conversation about your concern",
+      "You don't need to know the treatment name. Bring the concern, and the dermatologist will explain your options.",
+    ],
+    profile: { name: "Discovery Profile", dims: { "Fine Lines": 42, Firmness: 42, Texture: 42, Pigmentation: 42 } },
   },
 ];
 
-const FOCUS_COPY: Record<string, string> = {
-  "Fine lines": "fine lines, skin texture and facial freshness",
-  Wrinkles: "visible lines, skin quality and natural-looking improvement",
-  Acne: "breakouts, marks and skin health priorities",
-  "Hair loss": "hair shedding, scalp concerns and the right questions to ask",
-  "Dark circles": "the under-eye area and factors that can affect a tired appearance",
-  Scars: "the appearance of scars, texture and suitable treatment discussions",
-  "Loss of firmness": "firmness, facial support and overall freshness",
-  Dullness: "brightness, hydration and tired-looking skin",
-  Pigmentation: "uneven tone, pigmentation and skin clarity",
-  "Texture / pores": "texture, pores and smoother-looking skin",
-  "Sensitive skin": "skin comfort, sensitivity and gentle care options",
-  "Loss of facial volume": "facial volume, support and balanced rejuvenation",
-  "Overall ageing": "overall facial ageing, freshness and a realistic plan",
-  "I'm not sure": "understanding the changes you have noticed and clarifying your priorities",
-};
+const IMPACTS = [
+  "I notice it in photos or the mirror",
+  "It affects my confidence or comfort",
+  "I've tried products, but it keeps coming back",
+  "I'm not sure what is causing it",
+];
 
+const TIMINGS = ["This week", "Within a month", "Just exploring"];
 
-const PROFILES: Record<string, ResultProfile> = {
-  "Fine lines": {
-    name: "Early Prevention Profile",
-    dims: { "Fine Lines": 78, Firmness: 45, Texture: 40, Pigmentation: 25 },
-  },
-  Wrinkles: {
-    name: "Renewal Focus Profile",
-    dims: { "Fine Lines": 72, Firmness: 55, Texture: 45, Pigmentation: 28 },
-  },
-  Acne: {
-    name: "Acne & Skin Health Profile",
-    dims: { "Fine Lines": 20, Firmness: 20, Texture: 68, Pigmentation: 62 },
-  },
-  "Hair loss": {
-    name: "Hair & Scalp Consultation Profile",
-    dims: { "Fine Lines": 20, Firmness: 20, Texture: 30, Pigmentation: 20 },
-  },
-  "Dark circles": {
-    name: "Under-Eye Concern Profile",
-    dims: { "Fine Lines": 55, Firmness: 35, Texture: 35, Pigmentation: 62 },
-  },
-  Scars: {
-    name: "Scar & Texture Profile",
-    dims: { "Fine Lines": 30, Firmness: 30, Texture: 82, Pigmentation: 45 },
-  },
-  "Loss of firmness": {
-    name: "Firmness Focus Profile",
-    dims: { "Fine Lines": 50, Firmness: 80, Texture: 38, Pigmentation: 24 },
-  },
-  Dullness: {
-    name: "Freshness & Renewal Profile",
-    dims: { "Fine Lines": 30, Firmness: 35, Texture: 55, Pigmentation: 42 },
-  },
-  Pigmentation: {
-    name: "Tone & Clarity Profile",
-    dims: { "Fine Lines": 25, Firmness: 30, Texture: 45, Pigmentation: 82 },
-  },
-  "Texture / pores": {
-    name: "Texture & Renewal Profile",
-    dims: { "Fine Lines": 30, Firmness: 35, Texture: 78, Pigmentation: 40 },
-  },
-  "Sensitive skin": {
-    name: "Sensitive Skin Profile",
-    dims: { "Fine Lines": 25, Firmness: 25, Texture: 55, Pigmentation: 42 },
-  },
-  "Loss of facial volume": {
-    name: "Structural Support Profile",
-    dims: { "Fine Lines": 48, Firmness: 75, Texture: 35, Pigmentation: 22 },
-  },
-  "Overall ageing": {
-    name: "Multi-Area Rejuvenation Profile",
-    dims: { "Fine Lines": 50, Firmness: 55, Texture: 50, Pigmentation: 45 },
-  },
-  "I'm not sure": {
-    name: "Discovery Profile",
-    dims: { "Fine Lines": 42, Firmness: 42, Texture: 42, Pigmentation: 42 },
-  },
-};
+const STEPS = ["concern", "impact", "timing"] as const;
 
-function getProfile(concern?: string): ResultProfile {
-  return PROFILES[concern ?? "I'm not sure"] ?? PROFILES["I'm not sure"]!;
+type Stage = "quiz" | "result" | "done";
+
+function concernFor(value?: string) {
+  return CONCERNS.find((item) => item.value === value) ?? CONCERNS[CONCERNS.length - 1]!;
 }
 
-const DESIRED_OUTCOMES = [
-  "A fresher, healthier-looking appearance",
-  "Feeling more comfortable in your own skin",
-  "A natural result you're happy with",
-  "More confidence, day to day",
-];
-
-const CONCERN_TITLE: Record<string, string> = {
-  "Fine lines": "Fine Lines",
-  Wrinkles: "Visible Lines",
-  Acne: "Acne & Breakouts",
-  "Hair loss": "Hair & Scalp Concerns",
-  "Dark circles": "Dark Circles",
-  Scars: "Scars & Texture",
-  "Loss of firmness": "Firmness",
-  Dullness: "Facial Freshness",
-  Pigmentation: "Pigmentation",
-  "Texture / pores": "Texture",
-  "Sensitive skin": "Sensitive Skin",
-  "Loss of facial volume": "Facial Support",
-  "Overall ageing": "Overall Rejuvenation",
-  "I'm not sure": "Understanding the Changes",
-};
-
-const GOAL_TITLE: Record<string, [string, string]> = {
-  "Look fresher": ["Facial Freshness", "Overall complexion"],
-  "Improve texture": ["Skin Texture", "Smoothness and pores"],
-  "Reduce visible lines": ["Fine Lines", "Visible areas of concern"],
-  "Improve firmness": ["Firmness", "Facial support and definition"],
-  "Improve pigmentation": ["Even-Looking Tone", "Pigmentation and clarity"],
-  "Understand my options": ["Treatment Clarity", "A realistic, informed plan"],
-};
-
-type Stage = "quiz" | "revealing" | "gate" | "result";
+const WHATSAPP =
+  "https://wa.me/918903009723?text=" +
+  encodeURIComponent("Hello, I completed the skin check and would like a free consultation in Karur.");
 
 export function SkinAssessment({
   initialAreas = [],
@@ -215,413 +135,290 @@ export function SkinAssessment({
   onProfile?: (profile: ResultProfile) => void;
 }) {
   const [step, setStep] = useState(0);
-  const questionRef = useRef<HTMLHeadingElement>(null);
-  const navigated = useRef(false);
-  useEffect(() => { if (navigated.current) questionRef.current?.focus(); }, [step]);
-  const initialAnswers = initialAreas.length ? { area: initialAreas.join(", ") } : {};
-  const [answers, setAnswers] = useState<Answers>(initialAnswers);
   const [stage, setStage] = useState<Stage>("quiz");
-  const [activeInsight, setActiveInsight] = useState<string | null>(null);
-  const [gateName, setGateName] = useState("");
-  const [gatePhone, setGatePhone] = useState("");
-  const [gateError, setGateError] = useState("");
-  const [gateSending, setGateSending] = useState(false);
-  const question = QUESTIONS[Math.min(step, QUESTIONS.length - 1)]!;
-  const progress = stage !== "quiz" ? 100 : ((step + 1) / QUESTIONS.length) * 100;
+  const [answers, setAnswers] = useState<Answers>({});
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const moved = useRef(false);
 
-  const areasKey = initialAreas.join("|");
   useEffect(() => {
-    // Only carry a face-explorer selection into Q2 before the visitor has started
-    // answering — once real progress exists, a later face-area toggle must never
-    // silently discard it.
-    if (stage === "quiz" && step === 0 && initialAreas.length > 0) {
-      setAnswers((current) => ({ ...current, area: initialAreas.join(", ") }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areasKey]);
+    if (moved.current) headingRef.current?.focus();
+  }, [step, stage]);
 
-  function choose(value: string) {
-    if (step === 0 && !answers["concern"]) track("assessment_started");
-    const next = { ...answers, [question.id]: value };
+  function finish(next: Answers) {
+    const withAreas = initialAreas.length ? { ...next, area: initialAreas.join(", ") } : next;
+    const profile = concernFor(withAreas["concern"]).profile;
+    setAnswers(withAreas);
+    onComplete(withAreas);
+    onProfile?.(profile);
+    setSkinCheck({ answers: withAreas, profile });
+    track("assessment_completed", { concern: withAreas["concern"] });
+    setStage("result");
+  }
+
+  function pick(value: string) {
+    moved.current = true;
+    const id = STEPS[step]!;
+    if (step === 0) track("assessment_started");
+    track("assessment_question_answered", { question: id, answer: value, question_number: step + 1 });
+    const next = { ...answers, [id]: value };
     setAnswers(next);
-    nextQuestion(next);
+    if (step === STEPS.length - 1) finish(next);
+    else setStep(step + 1);
   }
 
-  function nextQuestion(answerState = answers) {
-    if (!answerState[question.id]) return;
-    navigated.current = true;
-    track("assessment_question_completed", {
-      question: question.id,
-      answer: answerState[question.id],
-      question_number: step + 1,
-    });
-    track("assessment_question_answered", {
-      question: question.id,
-      answer: answerState[question.id],
-      question_number: step + 1,
-    });
-
-    const advance = () => {
-      setActiveInsight(null);
-      if (step === QUESTIONS.length - 1) {
-        onComplete(answerState);
-        onProfile?.(getProfile(answerState["concern"]));
-        setSkinCheck({ answers: answerState, profile: getProfile(answerState["concern"]) });
-        track("assessment_completed");
-        setStage("result");
-        return;
-      }
-      setStep((current) => current + 1);
-    };
-
-    advance();
-  }
-
-  async function submitGate(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const name = gateName.trim();
-    const phone = gatePhone.trim();
-    if (name.length < 2 || phone.length < 7) {
-      setGateError("Please share your name and mobile number so we can send your Skin Profile.");
+    if (name.trim().length < 2 || phone.replace(/\D/g, "").length < 10) {
+      setError("Please add your name and 10-digit mobile number.");
       return;
     }
-    setGateError("");
-    setGateSending(true);
-    const profile = getProfile(answers["concern"]);
-    track("skin_profile_lead_captured", { concern: answers["concern"], profile: profile.name });
-
+    setError("");
+    setSending(true);
+    const concern = concernFor(answers["concern"]);
     const endpoint =
-      (import.meta.env["VITE_LEAD_ENDPOINT"] as string | undefined) ?? "/api/lead-capture";
-    const payload = {
-      lead_type: "skin_profile_result",
-      name,
-      phone,
-      primary_concern: answers["concern"] ?? "",
-      result_profile: profile.name,
-      result_dimensions: profile.dims,
-      assessment_responses: answers,
-      consent_status: true,
-      landing_page_identifier: "anti-aging-consultation-karur",
-      timestamp: new Date().toISOString(),
-      ...getAttribution(),
-    };
+      (import.meta.env["VITE_LEAD_ENDPOINT"] as string | undefined)?.trim() || "/api/lead-capture";
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          lead_type: "skin_profile_result",
+          source: "skin_check",
+          name: name.trim(),
+          phone: phone.trim(),
+          primary_concern: answers["concern"] ?? "",
+          result_profile: concern.profile.name,
+          result_dimensions: concern.profile.dims,
+          assessment_responses: answers,
+          consent_status: true,
+          consent_whatsapp: true,
+          landing_page_identifier: "anti-aging-consultation-karur",
+          timestamp: new Date().toISOString(),
+          ...getAttribution(),
+        }),
+        signal: AbortSignal.timeout(15000),
       });
-      if (!response.ok) throw new Error("Lead endpoint rejected the request");
+      const receipt = response.ok ? await response.json() : null;
+      if (receipt?.ok !== true) throw new Error("Lead not confirmed");
     } catch {
-      setGateError("We couldn't save your details. Please try again.");
-      setGateSending(false);
+      setError("We couldn't save your details. Please try again, or message us on WhatsApp.");
+      setSending(false);
       return;
     }
-
-    setGateSending(false);
-    setStage("result");
-    track("personalized_result_viewed", { concern: answers["concern"], profile: profile.name });
+    track("skin_profile_lead_captured", { concern: answers["concern"], profile: concern.profile.name });
+    setSending(false);
+    setStage("done");
   }
 
-  function resetAssessment() {
+  function restart() {
+    moved.current = true;
+    setAnswers({});
     setStep(0);
     setStage("quiz");
-    setAnswers(initialAnswers);
-    setActiveInsight(null);
-    setGateName("");
-    setGatePhone("");
-    setGateError("");
+    setError("");
   }
 
-  if (stage === "revealing") {
+  const dots = (
+    <div className="skin-game-progress" aria-hidden="true">
+      {[0, 1, 2, 3].map((index) => (
+        <i key={index} className={cn((stage !== "quiz" || index <= step) && "on")} />
+      ))}
+    </div>
+  );
+
+  if (stage === "done") {
     return (
-      <div
-        className="assessment-card flex flex-col items-center py-20 text-center"
-        aria-live="polite"
-      >
-        <RefreshCw className="size-7 animate-spin text-clay" />
-        <p className="mt-5 font-display text-3xl">Your Skin Profile is ready.</p>
-        <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          We're organising your answers into the areas that appear most relevant to your goals.
+      <div className="skin-game skin-game-done" aria-live="polite">
+        <span className="skin-game-done-check" aria-hidden="true">
+          <Check />
+        </span>
+        <h3 ref={headingRef} tabIndex={-1} className="skin-game-heading">
+          You've taken the right first step.
+        </h3>
+        <p className="skin-game-sub">
+          The clinic will call or WhatsApp you to arrange your free consultation with Dr. S.
+          Kiruthika. Want to pick a time now?
+        </p>
+        <a
+          className="skin-game-btn"
+          href={WHATSAPP}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => track("whatsapp_clicked", { source: "skin_check_done" })}
+        >
+          Continue on WhatsApp <ArrowRight />
+        </a>
+        <p className="skin-game-fine">
+          77A, Sengunthapuram Main Road, Karur · Open daily 10 am–2:30 pm and 6–9:30 pm
         </p>
       </div>
-    );
-  }
-
-  if (stage === "gate") {
-    return (
-      <form onSubmit={submitGate} className="assessment-card" aria-live="polite">
-        <p className="eyebrow text-clay">Almost there</p>
-        <h3 className="mt-4 max-w-2xl text-3xl leading-[1.1] sm:text-4xl">
-          Where should we send your Skin Profile?
-        </h3>
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Share your summary with the clinic so they can contact you about your concerns.
-        </p>
-        <div className="mt-7 grid gap-5 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="b-gate-name" className="form-label">
-              Name
-            </Label>
-            <Input
-              id="b-gate-name"
-              value={gateName}
-              onChange={(event) => setGateName(event.target.value)}
-              placeholder="Your name"
-              className="mt-2 h-12 rounded-xl border-border bg-background"
-            />
-          </div>
-          <div>
-            <Label htmlFor="b-gate-phone" className="form-label">
-              Mobile / WhatsApp number
-            </Label>
-            <Input
-              id="b-gate-phone"
-              type="tel"
-              value={gatePhone}
-              onChange={(event) => setGatePhone(event.target.value)}
-              placeholder="10-digit mobile number"
-              className="mt-2 h-12 rounded-xl border-border bg-background"
-            />
-          </div>
-        </div>
-        {gateError && <p className="mt-3 text-xs text-destructive">{gateError}</p>}
-        <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
-          By continuing, you agree to be contacted by Sanjay Rithik Hospital about your Skin
-          Profile. We won't use these details for anything else.
-        </p>
-        <Button
-          type="submit"
-          variant="clay"
-          size="xl"
-          className="mt-6 w-full sm:w-auto"
-          disabled={gateSending}
-        >
-          {gateSending ? "Preparing your profile…" : "Show My Personalised Result"} <ArrowRight />
-        </Button>
-      </form>
     );
   }
 
   if (stage === "result") {
-    const profile = getProfile(answers["concern"]);
-    const focus = FOCUS_COPY[answers["concern"] ?? "I'm not sure"] ?? FOCUS_COPY["I'm not sure"];
-    const concernLabel = CONCERN_TITLE[answers["concern"] ?? "I'm not sure"] ?? "Skin Priorities";
-    const selectedGoal = GOAL_TITLE[answers["goal"] ?? ""] ?? [
-      "Treatment Clarity",
-      "Realistic options",
-    ];
-
+    const concern = concernFor(answers["concern"]);
+    const Icon = concern.icon;
     return (
-      <div className="assessment-card skin-result" aria-live="polite">
-        <div className="skin-result-hero">
-          <p className="skin-result-pill">
-            <Sparkles aria-hidden="true" /> Your Skin Check Summary
-          </p>
-          <h3 className="skin-result-heading">
-            Your priority: <em>{concernLabel}</em>
-          </h3>
-          <p className="skin-result-lead">
-            Based on what you've told us, {focus} are the priorities to bring into your
-            consultation.
-          </p>
-          <p className="skin-result-disclaimer">
-            A self-reported profile to guide your conversation with the dermatologist, not a
-            medical diagnosis.
-          </p>
-        </div>
-
-        <div className="skin-result-grid mt-8">
-          <div className="skin-result-panel skin-result-snapshot">
-            <div className="skin-result-panel-head">
-              <div>
-                <p className="skin-result-kicker">Your skin snapshot</p>
-                <p className="skin-result-title">What you told us</p>
-              </div>
-              <span className="skin-result-badge" aria-hidden="true">
-                <Sparkles />
-              </span>
-            </div>
-            <dl className="skin-result-facts">
-              {[
-                { label: "Main concern", value: concernLabel, icon: Target },
-                { label: "Area noticed most", value: answers["area"] || "Not specified", icon: MapPin },
-                { label: "Noticed since", value: answers["duration"] || "Not specified", icon: Clock3 },
-                { label: "Already tried", value: answers["tried"] || "Not specified", icon: RefreshCw },
-                { label: "Desired result", value: selectedGoal[0], icon: Heart },
-                { label: "Comfortable with", value: answers["comfort"] || "Not sure yet", icon: Check },
-              ].map(({ label, value, icon: Icon }) => (
-                <div key={label} className="skin-result-fact">
-                  <span className="skin-result-fact-icon" aria-hidden="true">
-                    <Icon />
-                  </span>
-                  <div>
-                    <dt>{label}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <div className="skin-result-panel skin-result-wants">
-            <div className="skin-result-panel-head">
-              <div>
-                <p className="skin-result-kicker">Your desired direction</p>
-                <p className="skin-result-title">What you want</p>
-              </div>
-              <span className="skin-result-badge" aria-hidden="true">
-                <Heart />
-              </span>
-            </div>
-            <ul className="skin-result-wants-list">
-              {DESIRED_OUTCOMES.map((item) => (
-                <li key={item}>
-                  <span className="skin-result-check" aria-hidden="true">
-                    <Check />
-                  </span>
-                  {item}
-                </li>
-              ))}
+      <div className="skin-game" aria-live="polite">
+        {dots}
+        <p className="skin-game-step">Your result</p>
+        <h3 ref={headingRef} tabIndex={-1} className="skin-game-heading">
+          Your calm next step
+        </h3>
+        <div className="skin-game-result">
+          <div className="skin-game-result-card">
+            <span className="skin-game-result-icon" aria-hidden="true">
+              <Icon />
+            </span>
+            <p className="skin-game-kicker">Your starting point</p>
+            <p className="skin-game-result-title">{concern.result[0]}</p>
+            <p className="skin-game-result-copy">{concern.result[1]}</p>
+            <ul className="skin-game-tags" aria-label="Your answers">
+              <li>{concern.label}</li>
+              {answers["impact"] && <li>{answers["impact"]}</li>}
+              {answers["timing"] && <li>Start: {answers["timing"]}</li>}
             </ul>
-            <p className="skin-result-note">
-              Your consultation in Karur can focus on {selectedGoal[1].toLowerCase()} and a
-              realistic plan for your skin.
+            <p className="skin-game-note">
+              A consultation doesn't commit you to treatment. You'll hear suitable options,
+              sessions, downtime and cost before you decide.
             </p>
           </div>
-        </div>
 
-        <div className="skin-result-next mt-6">
-          <div className="skin-result-profile">
-            <p className="skin-result-kicker">Your profile</p>
-            <p className="skin-result-profile-name">{profile.name}</p>
-            <p className="skin-result-profile-sub">Natural-result preference</p>
-          </div>
-          <div className="skin-result-next-copy">
-            <p className="skin-result-kicker">Your next best step</p>
-            <p className="skin-result-next-title">
-              You don't need to choose a treatment. Bring this summary to a free consultation in
-              Karur.
+          <form className="skin-game-form" onSubmit={submit} noValidate>
+            <p className="skin-game-offer">
+              <Sparkles aria-hidden="true" /> Free consultation · Karur
             </p>
-            <p className="skin-result-next-text">
-              Dr. S. Kiruthika will assess these priorities and explain which options suit your
-              skin. Your answers are attached when you book, so you won't have to repeat them.
+            <p className="skin-game-form-title">Talk it through for free</p>
+            <p className="skin-game-form-sub">
+              Leave your name and WhatsApp number. The clinic will arrange a time that suits you.
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button
-                variant="clay"
-                size="xl"
-                asChild
-                onClick={() => track("booking_form_started", { source: "assessment_result" })}
-              >
-                <a href="#a-hero-form">
-                  Book My Free Consultation <ArrowRight />
-                </a>
-              </Button>
-              <button
-                type="button"
-                onClick={resetAssessment}
-                className="skin-result-restart"
-              >
-                <RefreshCw className="size-3.5" /> Start again
-              </button>
-            </div>
-          </div>
+            <label className="skin-game-field">
+              <span>Your name</span>
+              <input
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Your name"
+                autoComplete="name"
+              />
+            </label>
+            <label className="skin-game-field">
+              <span>Mobile / WhatsApp number</span>
+              <input
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder="10-digit number"
+                inputMode="tel"
+                autoComplete="tel"
+              />
+            </label>
+            {error && <p className="skin-game-error">{error}</p>}
+            <button type="submit" className="skin-game-btn skin-game-btn-full" disabled={sending}>
+              {sending ? "Booking…" : "Book My Free Consultation"} {!sending && <ArrowRight />}
+            </button>
+            <p className="skin-game-fine">
+              <Lock aria-hidden="true" /> No payment online. By booking you agree to be contacted
+              about this consultation.
+            </p>
+          </form>
         </div>
-        <p className="mt-6 text-xs text-muted-foreground">
-          This assessment is educational and does not replace medical consultation.
-        </p>
+        <button type="button" className="skin-game-back" onClick={restart}>
+          <ArrowLeft /> Change answers
+        </button>
       </div>
     );
   }
 
+  const id = STEPS[step]!;
   return (
-    <div className="assessment-card">
-      <div className="flex items-center justify-between gap-4">
-        <p className="eyebrow text-clay">
-          Question {step + 1} of {QUESTIONS.length}
-        </p>
-        <span className="text-xs text-muted-foreground">About 60 seconds</span>
-      </div>
-      <div
-        className="mt-4 h-1 w-full overflow-hidden rounded-full bg-secondary"
-        role="progressbar"
-        aria-valuemin={1}
-        aria-valuemax={QUESTIONS.length}
-        aria-valuenow={step + 1}
-        aria-label={`Question ${step + 1} of ${QUESTIONS.length}`}
-      >
-        <div
-          className="h-full bg-gradient-clay transition-[width] duration-500 ease-out"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-      <h3 ref={questionRef} tabIndex={-1} aria-live="polite" className="mt-7 text-3xl leading-[1.08] sm:text-[2.65rem]">{question.title}</h3>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{question.help}</p>
-      {question.id === "area" && initialAreas.length > 0 && (
-        <div className="mt-5 rounded-2xl bg-sand p-5">
-          <p className="text-sm font-medium">We've added these from the face explorer:</p>
-          <p className="mt-2 text-xs text-muted-foreground">{initialAreas.join(" · ")}</p>
-          <Button
+    <div className="skin-game">
+      {dots}
+      <p className="skin-game-step">
+        Step {step + 1} of 3{id === "timing" && " · optional"}
+      </p>
+      {id === "concern" && (
+        <>
+          <h3 ref={headingRef} tabIndex={-1} className="skin-game-heading">
+            What concerns you most right now?
+          </h3>
+          <p className="skin-game-sub">There's no wrong answer. Tap the closest match.</p>
+          <div className="skin-game-choices">
+            {CONCERNS.map(({ value, label, hint, icon: Icon }) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={answers["concern"] === value}
+                className={cn("skin-game-choice", answers["concern"] === value && "selected")}
+                onClick={() => pick(value)}
+              >
+                <span className="skin-game-choice-icon" aria-hidden="true">
+                  <Icon />
+                </span>
+                <strong>{label}</strong>
+                <span className="skin-game-choice-hint">{hint}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      {id === "impact" && (
+        <>
+          <h3 ref={headingRef} tabIndex={-1} className="skin-game-heading">
+            How is it affecting your day?
+          </h3>
+          <p className="skin-game-sub">This helps Dr. Kiruthika understand what matters to you.</p>
+          <div className="skin-game-answers">
+            {IMPACTS.map((option) => (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={answers["impact"] === option}
+                className={cn("skin-game-answer", answers["impact"] === option && "selected")}
+                onClick={() => pick(option)}
+              >
+                {option} <ArrowRight aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      {id === "timing" && (
+        <>
+          <h3 ref={headingRef} tabIndex={-1} className="skin-game-heading">
+            When would you like to start?
+          </h3>
+          <p className="skin-game-sub">Same-day consultations are often available.</p>
+          <div className="skin-game-answers skin-game-answers-row">
+            {TIMINGS.map((option) => (
+              <button key={option} type="button" className="skin-game-answer" onClick={() => pick(option)}>
+                {option} <ArrowRight aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+          <button type="button" className="skin-game-skip" onClick={() => finish(answers)}>
+            Skip and see my result
+          </button>
+        </>
+      )}
+      <div className="skin-game-actions">
+        {step > 0 ? (
+          <button
             type="button"
-            variant="clay"
-            size="pill"
-            className="mt-4"
-            onClick={() => choose(initialAreas.join(", "))}
+            className="skin-game-back"
+            onClick={() => {
+              moved.current = true;
+              setStep(step - 1);
+            }}
           >
-            Continue with these areas <ArrowRight />
-          </Button>
-        </div>
-      )}
-      <div className="mt-7 grid gap-2.5 sm:grid-cols-2">
-        {(question.id === "area" && answers["concern"] === "Hair loss" ? ["Scalp", "Hairline", "Overall hair thinning", "Not sure"] : question.options).map((option) => {
-          const selected = answers[question.id] === option;
-          return (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => choose(option)}
-              className={cn(
-                "group flex min-h-14 items-center justify-between gap-3 rounded-2xl border border-border bg-background px-5 py-4 text-left text-[0.95rem] transition-all duration-300",
-                "hover:-translate-y-0.5 hover:border-clay hover:shadow-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay",
-                selected && "border-clay bg-sand",
-              )}
-            >
-              <span>{option}</span>
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground group-hover:border-clay group-hover:text-clay">
-                {selected ? <Check className="size-3.5" /> : <ArrowRight className="size-3.5" />}
-              </span>
-            </button>
-          );
-        })}
+            <ArrowLeft /> Back
+          </button>
+        ) : (
+          <span className="skin-game-fine">About 20 seconds · not a diagnosis</span>
+        )}
       </div>
-      <Button
-        type="button"
-        variant="clay"
-        size="xl"
-        className="skin-check-next mt-6 w-full sm:w-auto"
-        disabled={!answers[question.id]}
-        onClick={() => nextQuestion()}
-      >
-        {step === QUESTIONS.length - 1 ? "See my summary" : "Next question"} <ArrowRight />
-      </Button>
-      {activeInsight && (
-        <div
-          className="mt-5 rounded-2xl border-l-2 border-clay bg-sand px-5 py-4 text-sm leading-relaxed text-muted-foreground"
-          aria-live="polite"
-        >
-          {activeInsight}
-        </div>
-      )}
-      {step > 0 && (
-        <button
-          type="button"
-          onClick={() => setStep((current) => current - 1)}
-          className="mt-6 inline-flex items-center gap-2 rounded-full py-2 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" /> Back
-        </button>
-      )}
     </div>
   );
 }
