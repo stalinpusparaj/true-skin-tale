@@ -419,7 +419,7 @@ function TrustStrip() {
           <MapPin className="size-4 shrink-0 text-clay" aria-hidden="true" />
           Sanjay Rithik Hospital, Karur
         </span>
-        <span>19 years experience · 500+ clients</span>
+        <span>13 years experience · 1 Lakh+ satisfied patients</span>
         <a
           href="https://www.google.com/maps/search/?api=1&query=Sanjay+Rithik+Baby+Care+and+Skin+Laser+Cosmetology+Hospital+Karur"
           target="_blank"
@@ -1353,7 +1353,7 @@ function Proof() {
             </div>
             <h3 className="mt-5 text-3xl">Published experience</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              The site currently states 19 years of skin-treatment experience and 500+ patients.
+              The site currently states 13 years of skin-treatment experience and 1 Lakh+ satisfied patients.
               These are clinic-published claims, not independent outcome measures.
             </p>
             <p className="mt-5 text-xs text-muted-foreground">Source: official hospital website</p>
@@ -1649,5 +1649,4 @@ function StickyBar({ stage }: { stage: "hidden" | "skin" | "options" | "booking"
     </div>
   );
 }
-
 

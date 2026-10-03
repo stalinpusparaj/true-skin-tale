@@ -206,23 +206,16 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
               <small>Skin Laser · Cosmetology</small>
             </span>
           </a>
-          <a
-            href={MAPS}
-            target="_blank"
-            rel="noreferrer"
+          <div
             className="nav-google-badge"
-            aria-label="Sanjay Rithik Hospital, Karur on Google: rated 4.5 from 447 reviews"
-            onClick={() => track("google_badge_clicked", { source: "navigation" })}
+            aria-label="Sanjay Rithik Hospital, Karur: rated 4.5 from 447 reviews"
           >
-            <GoogleIcon />
+            <MapPin className="nav-google-icon" aria-hidden="true" />
             <span className="nav-google-place">Karur</span>
             <span className="nav-google-rating">
               4.5 <Star className="size-3 fill-current" />
             </span>
-          </a>
           </div>
-          <div className="premium-nav-trust" aria-label="Clinic contact details">
-            <span><Clock3 className="size-4" /> Open daily 10–2:30 · 6–9:30</span>
           </div>
           <TrackedLink
             href="#a-hero-form"
@@ -252,7 +245,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
             </h1>
             <p className="premium-hero-text">
               Dermatologist-led skin, hair and laser care at Sanjay Rithik Hospital with Dr. S.
-              Kiruthika, MBBS, MD (Dermatology). Your first consultation is free.
+              Kiruthika, MBBS, DDVL. Your first consultation is free.
             </p>
             <p className="hero-urgency">
               <span className="hero-urgency-dot" aria-hidden="true" />
@@ -285,7 +278,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
               />
             </div>
             <div className="hero-card-badge hero-card-badge-main">
-              <strong>550+ Happy Patients</strong>
+              <strong>1 Lakh+ Satisfied Patients</strong>
               <span>13+ years of experience</span>
             </div>
             <div className="hero-card-badge hero-card-badge-rating">
@@ -338,7 +331,7 @@ export function VersionA({ render, onAgeSelection }: { render: (sections: Record
             <Star className="size-4 fill-current" /> 4.5 · 447 Google reviews
           </span>
           <span className="flex items-center gap-2">
-            <ShieldCheck className="size-4" /> Dr. S. Kiruthika, MBBS, MD (Dermatology)
+            <ShieldCheck className="size-4" /> Dr. S. Kiruthika, MBBS, DDVL
           </span>
           <span className="flex items-center gap-2">
             <HeartHandshake className="size-4" /> Free consultation · 13 years’ experience
@@ -533,7 +526,7 @@ function TrustStrip() {
           <MapPin className="size-4 shrink-0 text-clay" aria-hidden="true" />
           Sanjay Rithik Hospital, Karur
         </span>
-        <span>19 years experience · 500+ clients</span>
+        <span>13 years experience · 1 Lakh+ satisfied patients</span>
         <a
           href={MAPS}
           target="_blank"
@@ -800,7 +793,7 @@ function Proof() {
               </div>
               <h3 className="mt-5 text-3xl">Published experience</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                The site currently states 19 years of skin-treatment experience and 500+ patients.
+                The site currently states 13 years of skin-treatment experience and 1 Lakh+ satisfied patients.
                 These are clinic-published claims, not independent outcome measures.
               </p>
               <p className="mt-5 text-xs text-muted-foreground">
@@ -919,7 +912,7 @@ function DoctorSection() {
         <div>
           <Eyebrow muted>Your dermatologist</Eyebrow>
           <h2 className="mt-4 text-4xl sm:text-5xl">Who will treat you in Karur? Meet Dr. S. Kiruthika</h2>
-          <p className="mt-3 text-sm font-medium">MBBS, MD (Dermatology) · Dermatologist &amp; Cosmetologist · 13 years’ experience</p>
+          <p className="mt-3 text-sm font-medium">MBBS, DDVL · Dermatologist &amp; Cosmetologist · 13 years’ experience</p>
           <p className="mt-5 leading-relaxed text-muted-foreground">
             Dr. S. Kiruthika has treated skin, hair and nail conditions for 13 years at Sanjay Rithik
             Hospital, Karur, with a special focus on anti-ageing. She treats acne, pigmentation,
@@ -1471,7 +1464,7 @@ function DoctorVideoSection() {
 const WHY_CHOOSE = [
   [
     "Experienced dermatologist",
-    "Dr. S. Kiruthika, MBBS, MD (Dermatology), has treated skin, hair and nail conditions for 13 years.",
+    "Dr. S. Kiruthika, MBBS, DDVL, has treated skin, hair and nail conditions for 13 years.",
   ],
   [
     "Dedicated procedure and laser rooms",
@@ -1777,17 +1770,5 @@ function HeroParticles() {
         />
       ))}
     </div>
-  );
-}
-
-/** Google "G" mark for the location / rating badge that links to the clinic's Google listing. */
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 48 48" width="16" height="16" aria-hidden="true" className="nav-google-icon">
-      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
-      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
-      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
-    </svg>
   );
 }
