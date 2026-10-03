@@ -3,6 +3,7 @@ type Payload = Record<string, unknown>;
 declare global {
   interface Window {
     dataLayer?: Payload[];
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -52,4 +53,11 @@ export function track(event: string, payload: Payload = {}) {
   };
   window.dataLayer = window.dataLayer ?? [];
   window.dataLayer.push(entry);
+  window.gtag?.("event", event, {
+    ...payload,
+    device: attribution.device,
+    utm_source: attribution.utm_source,
+    utm_medium: attribution.utm_medium,
+    utm_campaign: attribution.utm_campaign,
+  });
 }
