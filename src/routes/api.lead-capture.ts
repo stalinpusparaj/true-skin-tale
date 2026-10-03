@@ -259,6 +259,7 @@ async function syncGrowthOsLead(input: {
   if (!webhookUrl || !webhookSecret) return;
 
   const event = input.isRepeat ? "opportunity.updated" : "opportunity.created";
+  const timestamp = new Date().toISOString();
   const record = {
     id: input.opportunityId,
     name: `${input.name} · ${LEAD_SOURCE}`,
@@ -272,14 +273,13 @@ async function syncGrowthOsLead(input: {
   // Twenty-style webhook consumers that read the changed record from `data`.
   const body = JSON.stringify({
     event,
-    type: event,
-    source: "sanjay-rithik-landing-page",
-    id: input.opportunityId,
-    leadId: input.opportunityId,
-    person: { id: input.personId, name: input.name, phone: input.phone },
-    opportunity: { ...record },
-    data: { ...record },
-    lead: input.payload,
+    data: {
+      ...record,
+      source: "sanjay-rithik-landing-page",
+      person: { id: input.personId, name: input.name, phone: input.phone },
+      lead: input.payload,
+    },
+    timestamp,
   });
   const signingKey = await crypto.subtle.importKey(
     "raw",
@@ -289,15 +289,19 @@ async function syncGrowthOsLead(input: {
     ["sign"],
   );
   const signature = Buffer.from(
-    await crypto.subtle.sign("HMAC", signingKey, new TextEncoder().encode(body)),
+    await crypto.subtle.sign(
+      "HMAC",
+      signingKey,
+      new TextEncoder().encode(`${timestamp}:${body}`),
+    ),
   ).toString("hex");
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-GrowthOS-Signature": `sha256=${signature}`,
-      "X-Webhook-Signature": `sha256=${signature}`,
-      "X-Twenty-Signature": signature,
+      "X-GrowthOS-Signature": signature,
+      "X-Webhook-Signature": signature,
+      "X-Twenty-Webhook-Signature": signature,
     },
     body,
   });
