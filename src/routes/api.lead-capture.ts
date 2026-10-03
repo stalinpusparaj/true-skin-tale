@@ -243,6 +243,59 @@ async function twentyFetch<T>(
   return (await response.json()) as T;
 }
 
+async function syncGrowthOsLead(input: {
+  payload: LeadPayload;
+  name: string;
+  phone: string;
+  personId: string;
+  opportunityId?: string;
+  score?: ReturnType<typeof scoreLead>;
+  isRepeat: boolean;
+}) {
+  const webhookUrl =
+    process.env["GROWTHOS_TWENTY_WEBHOOK_URL"] ??
+    "https://growthos.169.58.3.64.sslip.io/api/webhooks/twenty/demo-clinic";
+  const webhookSecret = process.env["GROWTHOS_TWENTY_WEBHOOK_SECRET"];
+  if (!webhookUrl || !webhookSecret) return;
+
+  const body = JSON.stringify({
+    event: input.isRepeat ? "opportunity.updated" : "opportunity.created",
+    source: "sanjay-rithik-landing-page",
+    person: { id: input.personId, name: input.name, phone: input.phone },
+    opportunity: {
+      id: input.opportunityId,
+      name: `${input.name} · ${LEAD_SOURCE}`,
+      score: input.score?.score,
+      band: input.score?.band,
+      temperature: input.score?.temperature,
+    },
+    lead: input.payload,
+  });
+  const signingKey = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(webhookSecret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = Buffer.from(
+    await crypto.subtle.sign("HMAC", signingKey, new TextEncoder().encode(body)),
+  ).toString("hex");
+  const response = await fetch(webhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-GrowthOS-Signature": signature,
+      "X-Twenty-Signature": signature,
+    },
+    body,
+  });
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`GrowthOS webhook responded ${response.status}: ${detail.slice(0, 240)}`);
+  }
+}
+
 /**
  * Attach a note to a person or opportunity. Current Twenty versions name the relation
  * `personId` / `opportunityId`; older ones used `targetPersonId` / `targetOpportunityId`.
@@ -405,6 +458,16 @@ export const Route = createFileRoute("/api/lead-capture")({
           const noteId = note.data.createNote.id;
           await linkNote(baseUrl, apiKey, noteId, "person", personId);
           if (opportunityId) await linkNote(baseUrl, apiKey, noteId, "opportunity", opportunityId);
+
+          await syncGrowthOsLead({
+            payload,
+            name,
+            phone,
+            personId,
+            opportunityId,
+            score: leadScoreSummary,
+            isRepeat,
+          }).catch((error) => console.error("GrowthOS lead sync failed", error));
 
           return json({ ok: true, personId, opportunityId });
         } catch (error) {
