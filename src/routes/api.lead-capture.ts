@@ -266,6 +266,8 @@ async function syncGrowthOsLead(input: {
 
   const event = input.isRepeat ? "opportunity.updated" : "opportunity.created";
   const timestamp = new Date().toISOString();
+  // Twenty-style signing uses epoch milliseconds in the header and the signed string.
+  const signedAt = Date.now().toString();
   const record = {
     id: input.opportunityId,
     name: `${input.name} · ${LEAD_SOURCE}`,
@@ -298,7 +300,7 @@ async function syncGrowthOsLead(input: {
     await crypto.subtle.sign(
       "HMAC",
       signingKey,
-      new TextEncoder().encode(`${timestamp}:${body}`),
+      new TextEncoder().encode(`${signedAt}:${body}`),
     ),
   ).toString("hex");
   const response = await fetch(webhookUrl, {
@@ -309,7 +311,7 @@ async function syncGrowthOsLead(input: {
       "X-Webhook-Signature": signature,
       "X-Twenty-Webhook-Signature": signature,
       // GrowthOS verifies like Twenty: HMAC over "<timestamp>:<body>", timestamp sent here.
-      "X-Twenty-Webhook-Timestamp": timestamp,
+      "X-Twenty-Webhook-Timestamp": signedAt,
     },
     body,
   });
