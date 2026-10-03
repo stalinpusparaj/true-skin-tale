@@ -258,17 +258,27 @@ async function syncGrowthOsLead(input: {
   const webhookSecret = process.env["GROWTHOS_TWENTY_WEBHOOK_SECRET"];
   if (!webhookUrl || !webhookSecret) return;
 
+  const event = input.isRepeat ? "opportunity.updated" : "opportunity.created";
+  const record = {
+    id: input.opportunityId,
+    name: `${input.name} · ${LEAD_SOURCE}`,
+    pointOfContactId: input.personId,
+    leadScore: input.score?.score,
+    leadBand: input.score?.band,
+    leadTemperature: input.score?.temperature,
+    ...input.payload,
+  };
+  // Keep the envelope compatible with both GrowthOS' compact lead projection and
+  // Twenty-style webhook consumers that read the changed record from `data`.
   const body = JSON.stringify({
-    event: input.isRepeat ? "opportunity.updated" : "opportunity.created",
+    event,
+    type: event,
     source: "sanjay-rithik-landing-page",
+    id: input.opportunityId,
+    leadId: input.opportunityId,
     person: { id: input.personId, name: input.name, phone: input.phone },
-    opportunity: {
-      id: input.opportunityId,
-      name: `${input.name} · ${LEAD_SOURCE}`,
-      score: input.score?.score,
-      band: input.score?.band,
-      temperature: input.score?.temperature,
-    },
+    opportunity: { ...record },
+    data: { ...record },
     lead: input.payload,
   });
   const signingKey = await crypto.subtle.importKey(
@@ -285,7 +295,8 @@ async function syncGrowthOsLead(input: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-GrowthOS-Signature": signature,
+      "X-GrowthOS-Signature": `sha256=${signature}`,
+      "X-Webhook-Signature": `sha256=${signature}`,
       "X-Twenty-Signature": signature,
     },
     body,
